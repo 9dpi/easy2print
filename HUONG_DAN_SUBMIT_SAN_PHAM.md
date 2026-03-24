@@ -2,6 +2,11 @@
 
 Hệ thống đã được nâng cấp lên cơ chế **Trang Động (Dynamic Page)**. Bạn chỉ cần 1 tệp `digital-product-detail.html` duy nhất cho toàn bộ sản phẩm.
 
+> [!TIP]
+> **CÔNG CỤ MỚI**: Để việc thêm sản phẩm dễ dàng hơn, bạn có thể sử dụng trang admin nội bộ:
+> 🔗 [**add-product.html**](add-product.html)
+> Trang này sẽ giúp bạn tạo mã code tự động và xem trước (preview) sản phẩm trước khi thêm vào hệ thống.
+
 ---
 
 ## 📂 Bước 1: Chuẩn bị File trên Google Drive
