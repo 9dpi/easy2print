@@ -1,6 +1,4 @@
-html {
-    scroll-behavior: smooth;
-}
+/* scroll-behavior handled securely in JS */
 
 :root {
     --primary: #1a365d;

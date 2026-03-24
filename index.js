@@ -40,6 +40,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Smooth scroll for "Explore Now" button
+    const heroBtn = document.querySelector('.hero-btn');
+    if (heroBtn) {
+        heroBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = document.querySelector('#suggested-section');
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
+
     // Newsletter subscription
     const newsletterForm = document.querySelector('.newsletter-form');
     newsletterForm.addEventListener('submit', (e) => {
