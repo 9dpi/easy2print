@@ -23,7 +23,7 @@ Mở tệp `products.js` và thêm một đoạn mã JS cho sản phẩm mới v
 ```javascript
 "id-san-pham-doc-nhat": {
     title: "Tên Sản Phẩm Đầy Đủ Hiển Thị Trên Trang Chi Tiết",
-    price: "$9.99",
+    price: "$2.00", // GIÁ HIỆN TẠI ĐANG LÀ ĐỒNG GIÁ $2.00
     image: "assets/new-product-mockup.png",
     category: "Digital Downloads > SVG Files > Category",
     tags: ["svg", "art"]
@@ -36,7 +36,7 @@ Mở tệp `products.js` và thêm một đoạn mã JS cho sản phẩm mới v
 
 ## 💻 Bước 4: Hiển thị trên Trang chủ (`index.html`)
 
-Thêm khối `product-card` vào `index.html`. Quan trọng nhất là sửa ID trong phần `onclick`:
+Thêm khối `product-card` vào `index.html`. Quan trọng nhất là sửa ID trong phần `onclick` và thêm giá gốc để hiển thị gạch ngang:
 
 ```html
 <div class="product-card" data-tags="svg art" onclick="window.location.href='digital-product-detail.html?id=id-san-pham-doc-nhat'">
@@ -46,7 +46,7 @@ Thêm khối `product-card` vào `index.html`. Quan trọng nhất là sửa ID 
     </div>
     <div class="product-info">
         <h3>Tên Sản Phẩm Hiển Thị</h3>
-        <div class="product-price">$9.99</div>
+        <div class="product-price">$2.00 <span class="original-price">$5.00</span></div>
         <div class="hashtags">
             <span class="hashtag">#svg</span>
             <span class="hashtag">#art</span>
@@ -54,6 +54,20 @@ Thêm khối `product-card` vào `index.html`. Quan trọng nhất là sửa ID 
     </div>
 </div>
 ```
+
+---
+
+## 🔍 Tính năng Tìm kiếm & Lọc theo Danh mục
+
+1.  **Tìm kiếm**: Ô tìm kiếm phía trên cùng cho phép khách hàng tìm sản phẩm theo tên (không phân biệt hoa thường).
+2.  **Lọc Danh mục**: 4 vòng tròn danh mục bên dưới Hero Banner đã được cấu hình sẵn để lọc sản phẩm theo hashtag:
+    *   **T-shirts**: Lọc sản phẩm có tag `#svg`
+    *   **Posters**: Lọc sản phẩm có tag `#art`
+    *   **Kid & Babies**: Lọc sản phẩm có tag `#planner`
+    *   **Home & Living**: Lọc sản phẩm có tag `#laser`
+
+> [!IMPORTANT]
+> **Cache Browser**: Nếu bạn đã sửa file mà trang web không thay đổi, hãy thêm mã phiên bản vào link CSS/JS trong HTML (ví dụ: `index.css?v=2.1`) hoặc nhấn **Ctrl + F5** để xóa cache.
 
 ---
 
@@ -65,8 +79,3 @@ git add .
 git commit -m "Add new digital product: [ID Sản Phẩm]"
 git push origin main
 ```
-
----
-
-### 💡 Lưu ý quan trọng cho `data-tags`:
-Phần lọc tìm kiếm theo hashtag dựa vào thuộc tính `data-tags="..."`. Bạn phải điền đúng tag (svg, laser, art,...) để khách hàng có thể tìm thấy sản phẩm khi bấm vào Menu Danh mục.
