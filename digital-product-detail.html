@@ -252,6 +252,34 @@ Send me a message anytime — I’m happy to help!
     </div>
 </footer>
 
+<script src="products.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id') || 'welcome-floral-door-hanger';
+        const product = window.productDatabase[productId];
+
+        if (product) {
+            document.title = `${product.title} | Easy to Print`;
+            document.querySelector('.product-title').innerText = product.title;
+            document.querySelector('.price').innerText = product.price;
+            document.querySelector('.breadcrumbs').innerText = product.category;
+            
+            const mainImg = document.querySelector('.main-image img');
+            mainImg.src = product.image;
+            mainImg.alt = product.title;
+
+            // Simple description update if needed, otherwise keep default
+            if (product.title.includes('SVG')) {
+                document.querySelector('.info-card:nth-child(4) span').innerText = "1 SVG, 1 PNG, 1 PDF";
+            }
+            
+            // Update thumbnails
+            const thumbs = document.querySelectorAll('.thumb img');
+            if (thumbs.length > 0) thumbs[0].src = product.image;
+        }
+    });
+</script>
 <script src="checkout.js"></script>
 </body>
 </html>
