@@ -13,8 +13,8 @@ const CONFIG = {
   PAYPAL_CLIENT_ID: 'YOUR_PAYPAL_CLIENT_ID', // Thay bằng ID thực tế
   PAYPAL_SECRET: 'YOUR_PAYPAL_SECRET',       // Thay bằng Secret thực tế
   PAYPAL_API: 'https://api-m.sandbox.paypal.com', // Đổi thành 'https://api-m.paypal.com' khi chạy thật (Live)
-  SHEET_ID: '1UAlwooykAXCkmDajDp6KgQqMxL2z8FCTeR_CBE7bTjo',
-  DRIVE_FOLDER_ID: '1K2n0Wcpofaxd3Qv_lXDeFNtpDp_f7l2z'
+  SHEET_ID: 'YOUR_GOOGLE_SHEET_ID',
+  DRIVE_FOLDER_ID: 'YOUR_GOOGLE_DRIVE_FOLDER_ID'
 };
 
 function doPost(e) {

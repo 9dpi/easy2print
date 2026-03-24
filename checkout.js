@@ -45,8 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             transaction_id: details.id,
             product_name: document.querySelector('.product-title') ? document.querySelector('.product-title').innerText : document.title,
             amount: details.purchase_units[0].amount.value,
-            currency: details.purchase_units[0].amount.currency_code,
-            sheet_id: '1UAlwooykAXCkmDajDp6KgQqMxL2z8FCTeR_CBE7bTjo' // Logging Sheet
+            currency: details.purchase_units[0].amount.currency_code
         };
 
         try {
