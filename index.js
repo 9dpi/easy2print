@@ -6,10 +6,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     searchForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const query = searchInput.value.trim();
+        const query = searchInput.value.trim().toLowerCase();
+        
+        const cards = document.querySelectorAll('.product-card');
+        const grid = document.querySelector('.product-grid');
+        
         if (query) {
-            console.log(`Searching for: ${query}`);
-            alert(`You are searching for: ${query}\nThis feature is currently under development!`);
+            cards.forEach(card => {
+                const title = card.querySelector('h3').innerText.toLowerCase();
+                if (title.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            if (grid) {
+                grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        } else {
+            // If empty, show all
+            cards.forEach(card => card.style.display = 'block');
         }
     });
 
@@ -66,3 +83,39 @@ window.filterCategory = function(e, category) {
         grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 };
+
+// Modal Functions
+window.openModal = function(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Prevent background scroll
+    }
+};
+
+window.closeModal = function(event, modalId) {
+    // If the click is on the background overlay (the modal itself)
+    if (event.target.id === modalId) {
+        document.getElementById(modalId).style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+};
+
+window.closeModalDirect = function(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+};
+
+// Also handle close on Esc key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const activeModals = document.querySelectorAll('.universal-modal[style*="display: flex"]');
+        activeModals.forEach(modal => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+    }
+});

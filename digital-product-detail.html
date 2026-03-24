@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome To Our Home Floral Door Hanger SVG | Easy to Print</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="index.css?v=2.0">
     <link rel="stylesheet" href="product.css">
     <style>
         .what-to-know-grid {
@@ -134,7 +134,8 @@
             
             <div class="price-section">
                 <span class="price">$8.50</span>
-                <span class="stock-status" style="position: static; display: inline-block; background: #fff4e5; color: #b76e00;">Instant Download</span>
+                <span class="original-price" style="text-decoration: line-through; color: #999; margin-left: 10px; font-size: 0.8em;">$5.00</span>
+                <span class="stock-status" style="position: static; display: inline-block; background: #fff4e5; color: #b76e00; margin-left: 10px;">Instant Download</span>
             </div>
 
             <div class="checkout-section">
@@ -268,6 +269,15 @@ Send me a message anytime — I’m happy to help!
             const mainImg = document.querySelector('.main-image img');
             mainImg.src = product.image;
             mainImg.alt = product.title;
+
+            // Show discount if price is $2.00
+            const origPrice = document.querySelector('.original-price');
+            if (product.price === "$2.00") {
+                origPrice.innerText = "$5.00";
+                origPrice.style.display = 'inline-block';
+            } else {
+                origPrice.style.display = 'none';
+            }
 
             // Simple description update if needed, otherwise keep default
             if (product.title.includes('SVG')) {

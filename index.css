@@ -1,3 +1,7 @@
+html {
+    scroll-behavior: smooth;
+}
+
 :root {
     --primary: #1a365d;
     --accent: #f56e0f;
@@ -588,6 +592,7 @@ main {
 }
 
 .main-footer {
+    display: none !important;
     background-color: #1e21b0;
     color: white;
     padding: 60px 40px;
@@ -618,11 +623,11 @@ main {
 }
 
 .bottom-bar {
-    background: #222;
+    background: #1e21b0;
     color: #fff;
     padding: 20px 40px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     font-size: 12px;
 }
 
@@ -681,4 +686,114 @@ main {
     .nav-links {
         display: none;
     }
+}
+
+/* Universal Modal System */
+.universal-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 9000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(4px);
+}
+
+.modal-container {
+    background-color: white;
+    width: 90%;
+    max-width: 700px;
+    max-height: 85vh;
+    border-radius: 20px;
+    position: relative;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes modalPop {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: 24px 30px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: var(--primary);
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 32px;
+    cursor: pointer;
+    color: #999;
+    line-height: 1;
+}
+
+.modal-close-btn:hover {
+    color: #333;
+}
+
+.modal-body {
+    padding: 30px;
+    overflow-y: auto;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #444;
+}
+
+.modal-body h3 {
+    margin: 24px 0 12px;
+    font-size: 18px;
+    color: #222;
+    border-left: 4px solid var(--accent);
+    padding-left: 12px;
+}
+
+.modal-body p {
+    margin-bottom: 16px;
+}
+
+.modal-body ul {
+    margin: 16px 0;
+    padding-left: 20px;
+}
+
+.modal-body li {
+    margin-bottom: 10px;
+}
+
+.footer-col a {
+    color: #595959;
+    text-decoration: none;
+    transition: 0.2s;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.footer-col a:hover {
+    color: var(--accent);
+    padding-left: 4px;
 }

@@ -7,7 +7,7 @@
     <meta name="description" content="Khám phá dịch vụ in ấn chất lượng cao và quà tặng cá nhân hóa tại Easy to Print. Từ áo thun, cốc sứ đến tranh canvas.">
     <!-- Google Fonts: Outfit -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="index.css?v=2.0">
 </head>
 <body>
 
@@ -69,53 +69,41 @@
         <div class="hero-content">
             <h1>Beautiful prints,<br>unique gifts.</h1>
             <p>High-quality printing products designed specifically for you.</p>
-            <a href="product-detail.html" class="hero-btn">Explore Now</a>
+            <a href="#suggested-section" class="hero-btn">Explore Now</a>
         </div>
         <div class="hero-image" style="background-image: url('assets/hero-banner.png');"></div>
     </section>
 
     <!-- Category Circles -->
     <section class="category-circles">
-        <div class="circle-item">
+        <div class="circle-item" onclick="filterCategory(event, 'svg')">
             <div class="circle-img">
                 <img src="assets/custom-tshirt.png" alt="T-shirts">
             </div>
-            <span>Custom T-shirts</span>
+            <span>T-shirts</span>
         </div>
-        <div class="circle-item">
+        <div class="circle-item" onclick="filterCategory(event, 'art')">
             <div class="circle-img">
-                <img src="assets/mug-poster.png" alt="Mugs & Posters">
+                <img src="assets/canvas-art.png" alt="Posters">
             </div>
-            <span>Mugs & Posters</span>
+            <span>Posters</span>
         </div>
-        <div class="circle-item">
+        <div class="circle-item" onclick="filterCategory(event, 'planner')">
             <div class="circle-img">
-                <img src="assets/canvas-art.png" alt="Canvas Art">
+                <img src="assets/mug-poster.png" alt="Kid & Babies">
             </div>
-            <span>Canvas Art</span>
+            <span>Kid & Babies</span>
         </div>
-        <div class="circle-item">
+        <div class="circle-item" onclick="filterCategory(event, 'laser')">
             <div class="circle-img">
-                <img src="assets/custom-tshirt.png" alt="Gifts">
+                <img src="assets/floral-door-hanger.png" alt="Home & Living">
             </div>
-            <span>Gifts for You</span>
-        </div>
-        <div class="circle-item">
-            <div class="circle-img">
-                <img src="assets/canvas-art.png" alt="Accessories">
-            </div>
-            <span>Printing Accessories</span>
-        </div>
-        <div class="circle-item">
-            <div class="circle-img">
-                <img src="assets/mug-poster.png" alt="Office">
-            </div>
-            <span>Office Supplies</span>
+            <span>Home & Living</span>
         </div>
     </section>
 
     <!-- Product Section 1 -->
-    <section>
+    <section id="suggested-section">
         <div class="section-header">
             <h2>Suggested for You Today</h2>
             <a href="#" class="view-all-btn">View All</a>
@@ -131,7 +119,7 @@
                 </div>
                 <div class="product-info">
                     <h3>Premium Cotton Custom Print T-shirt</h3>
-                    <div class="product-price">250,000₫ <span class="original-price">350,000₫</span></div><div class="hashtags"><span class="hashtag">#svg</span><span class="hashtag">#art</span></div>
+                    <div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span><span class="hashtag">#art</span></div>
                 </div>
             </div>
             <!-- Product Card 2 -->
@@ -144,7 +132,7 @@
                 </div>
                 <div class="product-info">
                     <h3>Personalized Ceramic Mug Set</h3>
-                    <div class="product-price">180,000₫</div><div class="hashtags"><span class="hashtag">#bundle</span><span class="hashtag">#art</span></div>
+                    <div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#bundle</span><span class="hashtag">#art</span></div>
                 </div>
             </div>
             <!-- Product Card 3 -->
@@ -157,7 +145,7 @@
                 </div>
                 <div class="product-info">
                     <h3>Modern Artistic Canvas Decor</h3>
-                    <div class="product-price">450,000₫</div><div class="hashtags"><span class="hashtag">#art</span></div>
+                    <div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#art</span></div>
                 </div>
             </div>
             <!-- Product Card 4 -->
@@ -170,7 +158,7 @@
                 </div>
                 <div class="product-info">
                     <h3>Personalized Corporate Gifting Solutions</h3>
-                    <div class="product-price">Contact Us</div><div class="hashtags"><span class="hashtag">#svg</span></div>
+                    <div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span></div>
                 </div>
             </div>
              <!-- Product Card 5 -->
@@ -184,7 +172,7 @@
                 </div>
                 <div class="product-info">
                     <h3>Welcome To Our Home Floral Door Hanger SVG</h3>
-                    <div class="product-price">$8.50</div><div class="hashtags"><span class="hashtag">#svg</span><span class="hashtag">#laser</span></div>
+                    <div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span><span class="hashtag">#laser</span></div>
                 </div>
             </div>
         </div>
@@ -203,71 +191,71 @@
                     <img src="assets/canvas-art.png" alt="SVG Design">
                     <span class="stock-status">DIGITAL</span>
                 </div>
-                <div class="product-info"><h3>Floral Mandala SVG Bundle</h3><div class="product-price">$5.99</div><div class="hashtags"><span class="hashtag">#svg</span><span class="hashtag">#bundle</span></div></div>
+                <div class="product-info"><h3>Floral Mandala SVG Bundle</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span><span class="hashtag">#bundle</span></div></div>
             </div>
             <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=retro-summer-tshirt'" data-tags="svg">
                 <div class="product-image-container">
                     <img src="assets/custom-tshirt.png" alt="Graphic Design">
                     <span class="stock-status">DIGITAL</span>
                 </div>
-                <div class="product-info"><h3>Retro Summer T-Shirt Design</h3><div class="product-price">$3.50</div><div class="hashtags"><span class="hashtag">#svg</span></div></div>
+                <div class="product-info"><h3>Retro Summer T-Shirt Design</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span></div></div>
             </div>
             <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=coffee-lover-mug'" data-tags="art">
                 <div class="product-image-container">
                     <img src="assets/mug-poster.png" alt="Printable">
                     <span class="stock-status">DIGITAL</span>
                 </div>
-                <div class="product-info"><h3>Coffee Lover Mug Wrap</h3><div class="product-price">$2.99</div><div class="hashtags"><span class="hashtag">#art</span></div></div>
+                <div class="product-info"><h3>Coffee Lover Mug Wrap</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#art</span></div></div>
             </div>
             <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=geometric-door-hanger'" data-tags="laser">
                 <div class="product-image-container">
                     <img src="assets/floral-door-hanger.png" alt="Laser Design">
                     <span class="stock-status">DIGITAL</span>
                 </div>
-                <div class="product-info"><h3>Geometric Door Hanger</h3><div class="product-price">$7.50</div><div class="hashtags"><span class="hashtag">#laser</span></div></div>
+                <div class="product-info"><h3>Geometric Door Hanger</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#laser</span></div></div>
             </div>
             <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=boho-wall-art'" data-tags="art bundle">
                 <div class="product-image-container">
                     <img src="assets/canvas-art.png" alt="Digital Print">
                     <span class="stock-status">DIGITAL</span>
                 </div>
-                <div class="product-info"><h3>Modern Boho Wall Art Set</h3><div class="product-price">$12.00</div><div class="hashtags"><span class="hashtag">#art</span><span class="hashtag">#bundle</span></div></div>
+                <div class="product-info"><h3>Modern Boho Wall Art Set</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#art</span><span class="hashtag">#bundle</span></div></div>
             </div>
 
             <!-- Row 2 -->
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=cat-paw-svg'" data-tags="svg"><div class="product-image-container"><img src="assets/custom-tshirt.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Cat Paw SVG Pattern</h3><div class="product-price">$4.20</div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=dog-mom-sticker'" data-tags="bundle"><div class="product-image-container"><img src="assets/mug-poster.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Dog Mom Sticker Pack</h3><div class="product-price">$6.00</div><div class="hashtags"><span class="hashtag">#bundle</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=layered-tree-svg'" data-tags="svg"><div class="product-image-container"><img src="assets/floral-door-hanger.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Layered Tree SVG Design</h3><div class="product-price">$8.99</div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=abstract-sunset-print'" data-tags="art bundle"><div class="product-image-container"><img src="assets/canvas-art.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Abstract Sunset Print</h3><div class="product-price">$5.00</div><div class="hashtags"><span class="hashtag">#art</span><span class="hashtag">#bundle</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=adventure-logo-designs'" data-tags="mockup"><div class="product-image-container"><img src="assets/custom-tshirt.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Adventure Logo Designs</h3><div class="product-price">$15.00</div><div class="hashtags"><span class="hashtag">#mockup</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=cat-paw-svg'" data-tags="svg"><div class="product-image-container"><img src="assets/custom-tshirt.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Cat Paw SVG Pattern</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=dog-mom-sticker'" data-tags="bundle"><div class="product-image-container"><img src="assets/mug-poster.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Dog Mom Sticker Pack</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#bundle</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=layered-tree-svg'" data-tags="svg"><div class="product-image-container"><img src="assets/floral-door-hanger.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Layered Tree SVG Design</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=abstract-sunset-print'" data-tags="art bundle"><div class="product-image-container"><img src="assets/canvas-art.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Abstract Sunset Print</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#art</span><span class="hashtag">#bundle</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=adventure-logo-designs'" data-tags="mockup"><div class="product-image-container"><img src="assets/custom-tshirt.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Adventure Logo Designs</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#mockup</span></div></div></div>
 
             <!-- Row 3 -->
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=teacher-gift-svg'" data-tags="svg"><div class="product-image-container"><img src="assets/mug-poster.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Teacher Gift SVG </h3><div class="product-price">$3.99</div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=rustic-monogram-frame'" data-tags="laser"><div class="product-image-container"><img src="assets/floral-door-hanger.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Rustic Monogram Frame</h3><div class="product-price">$6.50</div><div class="hashtags"><span class="hashtag">#laser</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=minimalist-plant-art'" data-tags="art"><div class="product-image-container"><img src="assets/canvas-art.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Minimalist Plant Art</h3><div class="product-price">$9.99</div><div class="hashtags"><span class="hashtag">#art</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=mountain-explorer-badge'" data-tags="planner"><div class="product-image-container"><img src="assets/custom-tshirt.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Mountain Explorer Badge</h3><div class="product-price">$4.50</div><div class="hashtags"><span class="hashtag">#planner</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=holiday-cookie-jars'" data-tags="svg"><div class="product-image-container"><img src="assets/mug-poster.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Holiday Cookie Jars SVG</h3><div class="product-price">$7.00</div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=teacher-gift-svg'" data-tags="svg"><div class="product-image-container"><img src="assets/mug-poster.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Teacher Gift SVG </h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=rustic-monogram-frame'" data-tags="laser"><div class="product-image-container"><img src="assets/floral-door-hanger.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Rustic Monogram Frame</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#laser</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=minimalist-plant-art'" data-tags="art"><div class="product-image-container"><img src="assets/canvas-art.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Minimalist Plant Art</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#art</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=mountain-explorer-badge'" data-tags="planner"><div class="product-image-container"><img src="assets/custom-tshirt.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Mountain Explorer Badge</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#planner</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=holiday-cookie-jars'" data-tags="svg"><div class="product-image-container"><img src="assets/mug-poster.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Holiday Cookie Jars SVG</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
 
             <!-- Row 4 -->
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=farmhouse-kitchen-art'" data-tags="art bundle"><div class="product-image-container"><img src="assets/floral-door-hanger.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Farmhouse Kitchen Art</h3><div class="product-price">$5.50</div><div class="hashtags"><span class="hashtag">#art</span><span class="hashtag">#bundle</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=galaxy-brush-set'" data-tags="bundle"><div class="product-image-container"><img src="assets/canvas-art.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Galaxy Brush Set</h3><div class="product-price">$14.00</div><div class="hashtags"><span class="hashtag">#bundle</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=yoga-illustration-svg'" data-tags="svg"><div class="product-image-container"><img src="assets/custom-tshirt.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Yoga Illustration SVG</h3><div class="product-price">$3.00</div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=birthday-bash-planner'" data-tags="planner"><div class="product-image-container"><img src="assets/mug-poster.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Birthday Bash Planner</h3><div class="product-price">$20.00</div><div class="hashtags"><span class="hashtag">#planner</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=winter-wonderland-icons'" data-tags="planner"><div class="product-image-container"><img src="assets/floral-door-hanger.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Winter Wonderland Icons</h3><div class="product-price">$8.00</div><div class="hashtags"><span class="hashtag">#planner</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=farmhouse-kitchen-art'" data-tags="art bundle"><div class="product-image-container"><img src="assets/floral-door-hanger.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Farmhouse Kitchen Art</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#art</span><span class="hashtag">#bundle</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=galaxy-brush-set'" data-tags="bundle"><div class="product-image-container"><img src="assets/canvas-art.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Galaxy Brush Set</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#bundle</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=yoga-illustration-svg'" data-tags="svg"><div class="product-image-container"><img src="assets/custom-tshirt.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Yoga Illustration SVG</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=birthday-bash-planner'" data-tags="planner"><div class="product-image-container"><img src="assets/mug-poster.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Birthday Bash Planner</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#planner</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=winter-wonderland-icons'" data-tags="planner"><div class="product-image-container"><img src="assets/floral-door-hanger.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Winter Wonderland Icons</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#planner</span></div></div></div>
 
             <!-- Row 5 -->
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=abstract-watercolor-kit'" data-tags="bundle"><div class="product-image-container"><img src="assets/canvas-art.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Abstract Watercolor Kit</h3><div class="product-price">$11.50</div><div class="hashtags"><span class="hashtag">#bundle</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=wildflower-svg-collection'" data-tags="svg bundle"><div class="product-image-container"><img src="assets/custom-tshirt.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Wildflower SVG Collection</h3><div class="product-price">$4.99</div><div class="hashtags"><span class="hashtag">#svg</span><span class="hashtag">#bundle</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=retro-gaming-pins'" data-tags="3d"><div class="product-image-container"><img src="assets/mug-poster.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Retro Gaming Pins</h3><div class="product-price">$6.00</div><div class="hashtags"><span class="hashtag">#3d</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=classic-wreath-template'" data-tags="svg"><div class="product-image-container"><img src="assets/floral-door-hanger.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Classic Wreath Template</h3><div class="product-price">$9.00</div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=office-zen-wall-art'" data-tags="art"><div class="product-image-container"><img src="assets/canvas-art.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Office Zen Wall Art</h3><div class="product-price">$7.50</div><div class="hashtags"><span class="hashtag">#art</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=abstract-watercolor-kit'" data-tags="bundle"><div class="product-image-container"><img src="assets/canvas-art.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Abstract Watercolor Kit</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#bundle</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=wildflower-svg-collection'" data-tags="svg bundle"><div class="product-image-container"><img src="assets/custom-tshirt.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Wildflower SVG Collection</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span><span class="hashtag">#bundle</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=retro-gaming-pins'" data-tags="3d"><div class="product-image-container"><img src="assets/mug-poster.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Retro Gaming Pins</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#3d</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=classic-wreath-template'" data-tags="svg"><div class="product-image-container"><img src="assets/floral-door-hanger.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Classic Wreath Template</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=office-zen-wall-art'" data-tags="art"><div class="product-image-container"><img src="assets/canvas-art.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Office Zen Wall Art</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#art</span></div></div></div>
 
             <!-- Row 6 -->
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=beach-vibes-label'" data-tags="svg art"><div class="product-image-container"><img src="assets/custom-tshirt.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Beach Vibes Label SVG</h3><div class="product-price">$3.25</div><div class="hashtags"><span class="hashtag">#svg</span><span class="hashtag">#art</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=product-mockup-bundle'" data-tags="bundle mockup"><div class="product-image-container"><img src="assets/mug-poster.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Product Mockup Bundle</h3><div class="product-price">$25.00</div><div class="hashtags"><span class="hashtag">#bundle</span><span class="hashtag">#mockup</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=family-crest-vector'" data-tags="svg"><div class="product-image-container"><img src="assets/floral-door-hanger.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Family Crest Vector</h3><div class="product-price">$13.99</div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=modern-alphabet-svg'" data-tags="svg"><div class="product-image-container"><img src="assets/canvas-art.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Modern Alphabet SVG</h3><div class="product-price">$5.50</div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
-            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=fitness-motivation-clipart'" data-tags="art"><div class="product-image-container"><img src="assets/custom-tshirt.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Fitness Motivation Clipart</h3><div class="product-price">$4.00</div><div class="hashtags"><span class="hashtag">#art</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=beach-vibes-label'" data-tags="svg art"><div class="product-image-container"><img src="assets/custom-tshirt.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Beach Vibes Label SVG</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span><span class="hashtag">#art</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=product-mockup-bundle'" data-tags="bundle mockup"><div class="product-image-container"><img src="assets/mug-poster.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Product Mockup Bundle</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#bundle</span><span class="hashtag">#mockup</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=family-crest-vector'" data-tags="svg"><div class="product-image-container"><img src="assets/floral-door-hanger.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Family Crest Vector</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=modern-alphabet-svg'" data-tags="svg"><div class="product-image-container"><img src="assets/canvas-art.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Modern Alphabet SVG</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#svg</span></div></div></div>
+            <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=fitness-motivation-clipart'" data-tags="art"><div class="product-image-container"><img src="assets/custom-tshirt.png"><span class="stock-status">DIGITAL</span></div><div class="product-info"><h3>Fitness Motivation Clipart</h3><div class="product-price">$2.00 <span class="original-price">$5.00</span></div><div class="hashtags"><span class="hashtag">#art</span></div></div></div>
         </div>
     </section>
 </main>
@@ -303,27 +291,131 @@
             <div class="footer-col">
                 <h4>About Us</h4>
                 <ul>
-                    <li>Brand Info</li>
-                    <li>Quality Policy</li>
-                    <li>Careers</li>
-                    <li>Press</li>
+                    <li><a onclick="openModal('modal-brand')">Brand Info</a></li>
+                    <li><a onclick="openModal('modal-quality')">Quality Policy</a></li>
+                    <li><a>Careers</a></li>
+                    <li><a>Press</a></li>
                 </ul>
             </div>
             <div class="footer-col">
                 <h4>Help</h4>
                 <ul>
-                    <li>Help Center</li>
-                    <li>Privacy Settings</li>
+                    <li><a onclick="openModal('modal-help')">Help Center</a></li>
+                    <li><a onclick="openModal('modal-privacy')">Privacy Settings</a></li>
                 </ul>
             </div>
         </div>
     </div>
 
     <div class="bottom-bar">
-        <div>Vietnam | English (US) | ₫ (VND)</div>
         <div>© 2026 Easy to Print. All rights reserved. | Privacy Policy | Terms of Use</div>
     </div>
 </footer>
+
+<!-- Universal Modals -->
+
+<div id="modal-brand" class="universal-modal" onclick="closeModal(event, 'modal-brand')">
+    <div class="modal-container">
+        <div class="modal-header"><h2>Brand Info</h2><button class="modal-close-btn" onclick="closeModalDirect('modal-brand')">&times;</button></div>
+        <div class="modal-body">
+            <h3>About easy2print</h3>
+            <h3>Our Story</h3>
+            <p>easy2print started with a simple idea: personalized printing should be easy. We noticed that many people love creative designs but feel overwhelmed by complicated ordering processes or struggle to find high-quality digital files.</p>
+            <p>So we built a place that combines both: a rich library of digital assets for makers who want to print at home or with their cutting machines, and a print-on-demand (POD) service for those who prefer to receive a finished, professionally printed product.</p>
+            <h3>Our Mission</h3>
+            <p>To democratize design and personalized printing. Anyone, anywhere, should be able to create something unique – for themselves or as a gift – without hassle.</p>
+            <h3>What We Value</h3>
+            <p><strong>Simplicity:</strong> From browsing to downloading or ordering, every step is designed to be intuitive and fast.</p>
+            <p><strong>Quality:</strong> Every digital file is tested for compatibility. Every physical product is inspected to ensure vibrant colors and long-lasting results.</p>
+            <p><strong>Creativity & Community:</strong> We work with independent designers to bring you fresh, original artwork that stands out from mass-produced goods.</p>
+            <h3>The Team</h3>
+            <p>We are a small group of designers, printing enthusiasts, and tech lovers. Behind easy2print is a team that genuinely enjoys making things and helping others bring their ideas to life.</p>
+        </div>
+    </div>
+</div>
+
+<div id="modal-quality" class="universal-modal" onclick="closeModal(event, 'modal-quality')">
+    <div class="modal-container">
+        <div class="modal-header"><h2>Quality Policy</h2><button class="modal-close-btn" onclick="closeModalDirect('modal-quality')">&times;</button></div>
+        <div class="modal-body">
+            <h3>Our Quality Commitment</h3>
+            <p>At easy2print, quality is not just a promise – it’s a standard we uphold for every product, whether digital or physical.</p>
+            <h3>For Digital Files</h3>
+            <ul>
+                <li><strong>Compatibility Check:</strong> All SVG, DXF, PNG, and EPS files are tested to work smoothly with popular software (Cricut Design Space, Silhouette Studio, Adobe Illustrator, CorelDRAW, Inkscape).</li>
+                <li><strong>Resolution:</strong> Raster files (PNG, JPG) are provided at a minimum of 300 DPI, ensuring sharp, print-ready quality.</li>
+                <li><strong>Layered & Organized:</strong> Multi-layer designs have clearly named layers for easy editing.</li>
+                <li><strong>Technical Support:</strong> If you encounter any issue with a file, contact us within 24 hours – we’ll help you resolve it promptly.</li>
+            </ul>
+            <h3>For Print-on-Demand Products</h3>
+            <ul>
+                <li><strong>Materials:</strong> We use eco-friendly inks, high-grade cotton (for apparel), durable ceramic (for mugs), and premium canvas to ensure lasting beauty.</li>
+                <li><strong>Printing Process:</strong> Each item is individually printed and inspected by experienced technicians before packaging.</li>
+                <li><strong>Packaging:</strong> Orders are carefully packed to prevent damage during transit, so they arrive in perfect condition.</li>
+            </ul>
+            <h3>Your Feedback Matters</h3>
+            <p>If you receive a product that does not match the description or has a quality issue, please contact us with photos. We will arrange a replacement or refund according to our return policy.</p>
+        </div>
+    </div>
+</div>
+
+<div id="modal-help" class="universal-modal" onclick="closeModal(event, 'modal-help')">
+    <div class="modal-container">
+        <div class="modal-header"><h2>Help Center</h2><button class="modal-close-btn" onclick="closeModalDirect('modal-help')">&times;</button></div>
+        <div class="modal-body">
+            <h3>Frequently Asked Questions</h3>
+            <p><strong>How do I buy and download digital files?</strong></p>
+            <ul>
+                <li>Add the desired design to your cart and complete checkout.</li>
+                <li>After payment, you’ll receive a confirmation email with a download link.</li>
+                <li>You can also access your files anytime under “My Account” → “Orders”.</li>
+            </ul>
+            <p><strong>How do I order a printed product?</strong></p>
+            <ul>
+                <li>Choose the product type (T-shirt, mug, canvas, etc.).</li>
+                <li>Select size, color, and any customization options.</li>
+                <li>Add to cart and checkout.</li>
+                <li>If you need a specific design or personalization, leave a note during checkout.</li>
+            </ul>
+            <p><strong>What software do I need to open SVG files?</strong></p>
+            <ul>
+                <li>Cricut Design Space, Silhouette Studio (Designer Edition+), Adobe Illustrator, CorelDRAW, Inkscape (free).</li>
+            </ul>
+            <p><strong>Can I use digital files for commercial purposes?</strong></p>
+            <p>Each product description states its license. Most designs allow commercial use (selling physical items), but reselling the digital file is prohibited.</p>
+            <p><strong>What are the processing and shipping times?</strong></p>
+            <ul>
+                <li>Digital files: Instant download.</li>
+                <li>Printed products: Processing 2-5 days. Shipping: Domestic (3-7 days), International (7-15 days).</li>
+            </ul>
+            <h3>Need more help?</h3>
+            <p>Email us at **support@easy2print.com** – we usually reply within 24 hours.</p>
+        </div>
+    </div>
+</div>
+
+<div id="modal-privacy" class="universal-modal" onclick="closeModal(event, 'modal-privacy')">
+    <div class="modal-container">
+        <div class="modal-header"><h2>Privacy Settings</h2><button class="modal-close-btn" onclick="closeModalDirect('modal-privacy')">&times;</button></div>
+        <div class="modal-body">
+            <h3>Privacy Policy & Your Choices</h3>
+            <p>At easy2print, we take your privacy seriously. We collect and use personal data only to fulfill orders and improve your experience.</p>
+            <h3>1. Information We Collect</h3>
+            <p>Account details (Name, email, address), Order info, and Browsing data (Cookies, IP address).</p>
+            <h3>2. How We Use Your Information</h3>
+            <p>Process orders, send confirmations, personalize recommendations, and send marketing emails (opt-in only).</p>
+            <h3>3. Information Sharing</h3>
+            <p>We do not sell data. Limited data shared with shipping carriers and payment processors (PayPal).</p>
+            <h3>4. Cookies & Tracking</h3>
+            <p>We use cookies to remember your cart and analyze traffic. You can disable them in browser settings.</p>
+            <h3>5. Your Rights</h3>
+            <p>You can request a copy of your data or account deletion at any time.</p>
+            <h3>6. Secure Payments</h3>
+            <p>All transactions are encrypted with SSL via secure gateways.</p>
+            <p><strong>Privacy Questions?</strong> Contact us at **privacy@easy2print.com**.</p>
+        </div>
+    </div>
+</div>
 
 <script src="index.js"></script>
 </body>
