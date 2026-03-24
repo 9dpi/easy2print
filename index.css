@@ -405,6 +405,23 @@ main {
     opacity: 0.7;
 }
 
+.hashtags {
+    margin-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.hashtag {
+    font-size: 10px;
+    background: var(--bg-soft);
+    color: var(--primary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+}
+
+
 /* Badge New */
 .badge-new {
     position: absolute;

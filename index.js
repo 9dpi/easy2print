@@ -43,3 +43,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// Category filtering function
+window.filterCategory = function(e, category) {
+    if (e) e.preventDefault();
+    const cards = document.querySelectorAll('.product-card');
+    
+    cards.forEach(card => {
+        const tags = card.getAttribute('data-tags');
+        if (!tags) return;
+        
+        if (category === 'all' || tags.includes(category)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    // Optional: Smooth scroll down to products
+    const grid = document.querySelector('.product-grid');
+    if (grid) {
+        grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+};
