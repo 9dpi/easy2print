@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Custom T-Shirt | Easy to Print</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="product.css">
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
+</head>
+<body>
+
+<header>
+    <div class="header-container">
+        <a href="index.html" class="logo" id="logo_branding">
+            <span class="text-logo">Easy <span class="accent-text">to</span> Print</span>
+        </a>
+
+        <form class="search-bar" id="search_form">
+            <input type="text" placeholder="Search for anything you want to print..." aria-label="Search">
+            <button type="submit" class="search-icon-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
+        </form>
+
+        <div class="user-actions">
+            <span class="action-item" title="Sign In">Sign in</span>
+            <div class="action-item" title="Favorites">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            </div>
+            <div class="action-item" title="Cart">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="product-container">
+    <div class="product-layout">
+        <div class="product-gallery">
+            <div class="main-image">
+                <img src="product_custom_tshirt_1774330521853.png" alt="Premium Custom T-Shirt">
+            </div>
+            <div class="thumbnails">
+                <div class="thumb active"><img src="product_custom_tshirt_1774330521853.png"></div>
+                <div class="thumb"><img src="product_custom_mug_poster_1774330544486.png"></div>
+                <div class="thumb"><img src="product_canvas_art_1774330565614.png"></div>
+            </div>
+        </div>
+
+        <div class="product-details">
+            <p class="breadcrumbs">Clothing > Men's > T-shirts</p>
+            <h1 class="product-title">Premium Cotton Custom Print T-Shirt</h1>
+            <div class="price-section">
+                <span class="price">$25.00</span>
+                <span class="stock-status">In Stock</span>
+            </div>
+
+            <div class="selection-group">
+                <label>Select Size</label>
+                <div class="options">
+                    <button class="option-btn">S</button>
+                    <button class="option-btn selected">M</button>
+                    <button class="option-btn">L</button>
+                    <button class="option-btn">XL</button>
+                </div>
+            </div>
+
+            <div class="selection-group">
+                <label>Select Color</label>
+                <div class="options colors">
+                    <button class="color-btn" style="background: white; border: 1px solid #ddd;"></button>
+                    <button class="color-btn selected" style="background: black;"></button>
+                    <button class="color-btn" style="background: navy;"></button>
+                    <button class="color-btn" style="background: #a11;"></button>
+                </div>
+            </div>
+
+            <div class="checkout-section">
+                <p class="checkout-note">After successful payment, a high-quality download link of your custom design will be sent to your email.</p>
+                <!-- PayPal Button Container -->
+                <div id="paypal-button-container"></div>
+            </div>
+
+            <div class="product-description">
+                <h3>Description</h3>
+                <p>Experience the ultimate comfort and quality with our Premium Cotton Custom Print T-Shirt. Made from 100% combed cotton, this t-shirt is perfect for any occasion. Whether you're looking for a unique gift or a personalized piece for your own wardrobe, our high-quality printing ensures your design looks stunning and lasts for years.</p>
+                <ul>
+                    <li>100% Combed & Ring-Spun Cotton</li>
+                    <li>Premium Direct-to-Garment (DTG) Printing</li>
+                    <li>Eco-Friendly Water-Based Inks</li>
+                    <li>Pre-shrunk for consistent fit</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Success Modal -->
+<div id="success-modal" class="modal">
+    <div class="modal-content">
+        <div class="success-icon">✓</div>
+        <h2>Thank you for your purchase!</h2>
+        <p>Your payment was successful. We have sent the high-quality **Google Drive** download link to your email.</p>
+        <p class="email-display" id="display-email">example@email.com</p>
+        <button class="close-modal">Back to Shopping</button>
+    </div>
+</div>
+
+<footer>
+    <div class="main-footer">
+        <div class="footer-columns">
+            <div class="footer-col">
+                <h4>Shop Easy to Print</h4>
+                <ul>
+                    <li>Gift ideas</li>
+                    <li>Product categories</li>
+                    <li>Printing blog</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Sell with Us</h4>
+                <ul>
+                    <li>Sell on Easy to Print</li>
+                    <li>For Business</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Help</h4>
+                <ul>
+                    <li>Help Center</li>
+                    <li>Privacy Settings</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="checkout.js"></script>
+</body>
+</html>
