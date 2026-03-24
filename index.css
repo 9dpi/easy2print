@@ -330,6 +330,22 @@ main {
     margin-bottom: 10px;
 }
 
+.stock-status {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(26, 54, 93, 0.85); /* Use primary color with opacity */
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    z-index: 5;
+    pointer-events: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .product-image-container img {
     position: absolute;
     top: 0;
