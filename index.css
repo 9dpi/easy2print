@@ -81,18 +81,65 @@ header {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 16px;
-    border-radius: 24px;
-    background: transparent;
+    background: none;
     border: none;
-    font-size: 14px;
-    font-weight: 500;
+    padding: 10px 15px;
+    border-radius: 25px;
     cursor: pointer;
-    white-space: nowrap;
+    font-weight: 500;
+    font-size: 14px;
+    transition: 0.2s;
+    position: relative;
 }
 
 .categories-btn:hover {
-    background: rgba(0,0,0,0.05);
+    background-color: rgba(0,0,0,0.05);
+}
+
+/* Dropdown Menu Styles */
+.categories-container {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    min-width: 220px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    z-index: 1000;
+    border-radius: 12px;
+    padding: 10px 0;
+    margin-top: 10px;
+    border: 1px solid #eee;
+}
+
+.categories-container:hover .dropdown-content {
+    display: block;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-content a {
+    color: var(--text-main);
+    padding: 12px 20px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.dropdown-content a:hover {
+    background-color: #f8f9fb;
+    color: var(--primary);
+    padding-left: 25px;
 }
 
 .search-bar {
@@ -256,9 +303,17 @@ main {
 
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
     margin-bottom: 60px;
+}
+
+@media (max-width: 1100px) {
+    .product-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 700px) {
+    .product-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 .product-card {
