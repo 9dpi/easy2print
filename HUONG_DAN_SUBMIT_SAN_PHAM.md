@@ -65,11 +65,15 @@ Thêm khối `product-card` vào `index.html`. Quan trọng nhất là sửa ID 
 ## 🔍 Tính năng Tìm kiếm & Lọc theo Danh mục
 
 1.  **Tìm kiếm**: Ô tìm kiếm phía trên cùng cho phép khách hàng tìm sản phẩm theo tên (không phân biệt hoa thường).
-2.  **Lọc Danh mục**: 4 vòng tròn danh mục bên dưới Hero Banner đã được cấu hình sẵn để lọc sản phẩm theo hashtag:
-    *   **T-shirts**: Lọc sản phẩm có tag `#svg`
-    *   **Posters**: Lọc sản phẩm có tag `#art`
-    *   **Kid & Babies**: Lọc sản phẩm có tag `#planner`
-    *   **Home & Living**: Lọc sản phẩm có tag `#laser`
+2.  **Lọc Danh mục**: Khách hàng có thể lọc theo menu điều hướng (`nav-links`) với các hashtag sau:
+    *   **SVG Files**: `#svg`
+    *   **Digital Art Prints**: `#art`
+    *   **Graphic Bundles**: `#bundle`
+    *   **Printables**: `#printable`
+    *   **T-Shirt Design**: `#tshirt`
+    *   **WallArt**: `#wallart`
+
+*(Chú ý điền đúng `data-tags` tại `product-card` để sản phẩm xuất hiện ở danh mục tương ứng).*
 
 > [!IMPORTANT]
 > **Cache Browser**: Nếu bạn đã sửa file mà trang web không thay đổi, hãy thêm mã phiên bản vào link CSS/JS trong HTML (ví dụ: `index.css?v=2.1`) hoặc nhấn **Ctrl + F5** để xóa cache.
