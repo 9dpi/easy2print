@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
             payer_email: details.payer.email_address,
             payer_name: details.payer.name.given_name + ' ' + details.payer.name.surname,
             transaction_id: details.id,
-            product_name: 'Premium Custom Print / Digital SVG',
+            product_name: document.querySelector('.product-title') ? document.querySelector('.product-title').innerText : document.title,
             amount: details.purchase_units[0].amount.value,
             currency: details.purchase_units[0].amount.currency_code,
             sheet_id: '1UAlwooykAXCkmDajDp6KgQqMxL2z8FCTeR_CBE7bTjo' // Logging Sheet
@@ -74,12 +74,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 label:  'checkout'
             },
             createOrder: function(data, actions) {
+                // Dynamically fetch price from the page
+                const priceElement = document.querySelector('.price');
+                let productPrice = "2.00"; // default fallback for digital files
+                if (priceElement) {
+                    const extractedPrice = priceElement.innerText.replace(/[^0-9.]/g, '');
+                    if (extractedPrice) {
+                        productPrice = extractedPrice;
+                    }
+                }
+
                 return actions.order.create({
                     purchase_units: [{
                         amount: {
-                            value: '25.00' // This would ideally be dynamic
+                            value: productPrice
                         },
-                        description: 'Easy to Print Purchase'
+                        description: document.title || 'Easy to Print Purchase'
                     }]
                 });
             },

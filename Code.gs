@@ -32,6 +32,13 @@ function doPost(e) {
     // BƯỚC 3: Kiểm tra trạng thái và số tiền (Bảo mật cốt lõi)
     if (orderDetails.status === 'COMPLETED') {
       
+      const amountPaid = parseFloat(orderDetails.purchase_units[0].amount.value);
+      
+      // BẢO MẬT: Kiểm tra số tiền giao dịch khớp với giá sản phẩm (đồng giá $2.00)
+      if (amountPaid < 2.00) {
+          throw new Error('Transaction amount is less than the required $2.00. Possible fraud.');
+      }
+
       // A. Ghi dữ liệu vào Google Sheets
       logToGoogleSheet(data, orderDetails);
 
