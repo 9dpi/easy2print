@@ -4,10 +4,12 @@
  * Hướng dẫn:
  * 1. Paste đoạn code này vào trình biên soạn Google Apps Script.
  * 2. Thay đổi PAYPAL_CLIENT_ID và PAYPAL_SECRET (Lấy từ https://developer.paypal.com/)
- * 3. Deploy dưới dạng Web App và cấp quyền truy cập "Anyone" (Kể cả người ẩn danh).
+ * 3. Tài khoản PayPal nhận tiền: vuquangcuong@gmail.com
+ * 4. Deploy dưới dạng Web App và cấp quyền truy cập "Anyone" (Kể cả người ẩn danh).
  */
 
 const CONFIG = {
+  PAYPAL_ACCOUNT: 'vuquangcuong@gmail.com',  // Email tài khoản nhận tiền
   PAYPAL_CLIENT_ID: 'YOUR_PAYPAL_CLIENT_ID', // Thay bằng ID thực tế
   PAYPAL_SECRET: 'YOUR_PAYPAL_SECRET',       // Thay bằng Secret thực tế
   PAYPAL_API: 'https://api-m.sandbox.paypal.com', // Đổi thành 'https://api-m.paypal.com' khi chạy thật (Live)
