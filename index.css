@@ -322,7 +322,8 @@ main {
 
 .product-image-container {
     position: relative;
-    padding-top: 80%;
+    width: 100%;
+    aspect-ratio: 1 / 1;
     background-color: #f4f4f4;
     border-radius: var(--card-radius);
     overflow: hidden;
