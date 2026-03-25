@@ -10,8 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const secondaryGrid = document.getElementById('secondary-product-grid');
         if (!grid) return;
 
-        // Show loading state
-        grid.innerHTML = '<div class="loading-spinner">Loading products...</div>';
+        // Show loading state with skeletons
+        const skeletonHtml = Array(5).fill('<div class="skeleton-card"></div>').join('');
+        grid.innerHTML = skeletonHtml;
+        if (secondaryGrid) secondaryGrid.innerHTML = skeletonHtml;
 
         try {
             let products = [];
@@ -36,6 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function formatPrice(val) {
+        if (!val) return '';
+        const num = parseFloat(String(val).replace(/[^0-9.]/g, ''));
+        if (isNaN(num)) return val;
+        return '$' + num.toFixed(2);
+    }
+
     function renderProducts(products) {
         const grid = document.getElementById('product-grid');
         const secondaryGrid = document.getElementById('secondary-product-grid');
@@ -49,6 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const tagsDataAttr = tags.join(' ');
             const hashtagsHtml = tags.map(t => `<span class="hashtag">#${t}</span>`).join('');
             
+            const priceFormatted = formatPrice(product.price);
+            const origFormatted = product.original_price ? formatPrice(product.original_price) : '';
+            
             const cardHtml = `
                 <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=${product.id}'" data-tags="${tagsDataAttr}">
                     <div class="product-image-container">
@@ -60,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="product-info">
                         <h3>${product.title}</h3>
-                        <div class="product-price">${product.price} <span class="original-price">${product.original_price}</span></div>
+                        <div class="product-price">${priceFormatted} <span class="original-price">${origFormatted}</span></div>
                         <div class="hashtags">${hashtagsHtml}</div>
                     </div>
                 </div>

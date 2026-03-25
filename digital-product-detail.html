@@ -253,40 +253,67 @@ Send me a message anytime — I’m happy to help!
     </div>
 </footer>
 
-<script src="products.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwBQdvEMfs43bA-tiHzKALERxhrPFIUK-IXkWOio3vLCe8QUXfyziGliwIkckFtt5mFLw/exec';
         const urlParams = new URLSearchParams(window.location.search);
-        const productId = urlParams.get('id') || 'welcome-floral-door-hanger';
-        const product = window.productDatabase[productId];
+        const productId = urlParams.get('id');
+        if (!productId) return;
 
-        if (product) {
-            document.title = `${product.title} | Easy to Print`;
-            document.querySelector('.product-title').innerText = product.title;
-            document.querySelector('.price').innerText = product.price;
-            document.querySelector('.breadcrumbs').innerText = product.category;
-            
-            const mainImg = document.querySelector('.main-image img');
-            mainImg.src = product.image;
-            mainImg.alt = product.title;
+        async function fetchProducts() {
+            const CACHE_KEY = 'easy2print_products';
+            const CACHE_TTL = 120000;
+            const cached = localStorage.getItem(CACHE_KEY);
+            const cacheTime = localStorage.getItem(CACHE_KEY + '_time');
 
-            // Show discount if price is $2.00
-            const origPrice = document.querySelector('.original-price');
-            if (product.price === "$2.00") {
-                origPrice.innerText = "$5.00";
-                origPrice.style.display = 'inline-block';
-            } else {
-                origPrice.style.display = 'none';
+            if (cached && cacheTime && (Date.now() - cacheTime < CACHE_TTL)) {
+                return JSON.parse(cached);
             }
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+            localStorage.setItem(CACHE_KEY + '_time', Date.now());
+            return data;
+        }
 
-            // Simple description update if needed, otherwise keep default
-            if (product.title.includes('SVG')) {
-                document.querySelector('.info-card:nth-child(4) span').innerText = "1 SVG, 1 PNG, 1 PDF";
+        function formatPrice(val) {
+            if (!val) return '';
+            const num = parseFloat(String(val).replace(/[^0-9.]/g, ''));
+            if (isNaN(num)) return val;
+            return '$' + num.toFixed(2);
+        }
+
+        try {
+            const products = await fetchProducts();
+            const product = products.find(p => p.id === productId);
+
+            if (product) {
+                document.title = `${product.title} | Easy to Print`;
+                document.querySelector('.product-title').innerText = product.title;
+                document.querySelector('.price').innerText = formatPrice(product.price);
+                document.querySelector('.breadcrumbs').innerText = product.category;
+                
+                const mainImg = document.querySelector('.main-image img');
+                mainImg.src = product.image_url || product.image_path;
+                mainImg.alt = product.title;
+
+                const origPrice = document.querySelector('.original-price');
+                if (product.original_price) {
+                    origPrice.innerText = formatPrice(product.original_price);
+                    origPrice.style.display = 'inline-block';
+                } else {
+                    origPrice.style.display = 'none';
+                }
+
+                if (product.description) {
+                    document.querySelector('.full-desc').innerText = product.description;
+                }
+                
+                const thumbs = document.querySelectorAll('.thumb img');
+                if (thumbs.length > 0) thumbs[0].src = product.image_url || product.image_path;
             }
-            
-            // Update thumbnails
-            const thumbs = document.querySelectorAll('.thumb img');
-            if (thumbs.length > 0) thumbs[0].src = product.image;
+        } catch (e) {
+            console.error('Error loading detail:', e);
         }
     });
 </script>
