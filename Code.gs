@@ -1,127 +1,137 @@
-
 /**
- * EASY TO PRINT - SECURE BACKEND (GOOGLE APPS SCRIPT)
- * Hướng dẫn:
- * 1. Paste đoạn code này vào trình biên soạn Google Apps Script.
- * 2. Thay đổi PAYPAL_CLIENT_ID và PAYPAL_SECRET (Lấy từ https://developer.paypal.com/)
- * 3. Tài khoản PayPal nhận tiền: vuquangcuong@gmail.com
- * 4. Deploy dưới dạng Web App và cấp quyền truy cập "Anyone" (Kể cả người ẩn danh).
+ * EASY TO PRINT - SECURE BACKEND (PHASE 1 - GSHEET DATABASE)
  */
 
 const CONFIG = {
-  PAYPAL_ACCOUNT: 'vuquangcuong@gmail.com',  // Email tài khoản nhận tiền
-  PAYPAL_CLIENT_ID: 'YOUR_PAYPAL_CLIENT_ID', // Thay bằng ID thực tế
-  PAYPAL_SECRET: 'YOUR_PAYPAL_SECRET',       // Thay bằng Secret thực tế
-  PAYPAL_API: 'https://api-m.sandbox.paypal.com', // Đổi thành 'https://api-m.paypal.com' khi chạy thật (Live)
+  PAYPAL_ACCOUNT: 'vuquangcuong@gmail.com',
+  PAYPAL_CLIENT_ID: 'YOUR_PAYPAL_CLIENT_ID',
+  PAYPAL_SECRET: 'YOUR_PAYPAL_SECRET',
+  PAYPAL_API: 'https://api-m.sandbox.paypal.com',
   SHEET_ID: 'YOUR_GOOGLE_SHEET_ID',
   DRIVE_FOLDER_ID: 'YOUR_GOOGLE_DRIVE_FOLDER_ID'
 };
+
+/**
+ * Endpoint GET: Lấy danh sách sản phẩm (Dùng cho Website render động)
+ * Có tích hợp CacheService để tăng tốc độ phản hồi.
+ */
+function doGet(e) {
+  const cache = CacheService.getScriptCache();
+  const cachedData = cache.get("products_json");
+  
+  if (cachedData != null) {
+    return ContentService.createTextOutput(cachedData).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  try {
+    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+    const sheet = ss.getSheetByName("Products");
+    if (!sheet) {
+      return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const data = sheet.getDataRange().getValues();
+    const headers = data[0];
+    const products = [];
+
+    for (let i = 1; i < data.length; i++) {
+        let product = {};
+        data[i].forEach((cell, index) => {
+            let key = headers[index].toLowerCase().replace(/\s+/g, '_');
+            product[key] = cell;
+        });
+        products.push(product);
+    }
+
+    const finalJson = JSON.stringify(products);
+    // Lưu vào cache trong 5 phút (300 giây)
+    cache.put("products_json", finalJson, 300);
+    
+    return ContentService.createTextOutput(finalJson).setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: error.message }))
+                         .setMimeType(ContentService.MimeType.JSON);
+  }
+}
 
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
     
-    // Xử lý yêu cầu tự động chèn sản phẩm từ tool submit-product.js
     if (data.action === "addProduct") {
       return handleAddProduct(data);
     }
     
-    const transactionId = data.transaction_id;
-    const payerEmail = data.payer_email;
+    const transactionId = data.transaction_id || data.id;
+    const payerEmail = data.payer_email || (data.payer ? data.payer.email_address : "");
 
-    // BƯỚC 1: Lấy Access Token từ PayPal
     const accessToken = getPayPalAccessToken();
-
-    // BƯỚC 2: Xác thực đơn hàng trực tiếp với Server PayPal
     const orderDetails = verifyPayPalOrder(transactionId, accessToken);
 
-    // BƯỚC 3: Kiểm tra trạng thái và số tiền (Bảo mật cốt lõi)
     if (orderDetails.status === 'COMPLETED') {
-      
-      const amountPaid = parseFloat(orderDetails.purchase_units[0].amount.value);
-      
-      // BẢO MẬT: Kiểm tra số tiền giao dịch khớp với giá sản phẩm (đồng giá $2.00)
-      if (amountPaid < 2.00) {
-          throw new Error('Transaction amount is less than the required $2.00. Possible fraud.');
-      }
+        const amountPaid = parseFloat(orderDetails.purchase_units[0].amount.value);
+        if (amountPaid < 2.00) throw new Error('Transaction amount too low.');
 
-      // A. Ghi dữ liệu vào Google Sheets
-      logToGoogleSheet(data, orderDetails);
+        logToGoogleSheet(data, orderDetails);
+        sendDownloadEmail(payerEmail, data.product_name);
 
-      // B. Gửi Email chứa link tải file (Bảo mật: Link không lộ ở Frontend)
-      sendDownloadEmail(payerEmail, data.product_name);
-
-      return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'Order verified and logged.' }))
-                           .setMimeType(ContentService.MimeType.JSON);
+        return ContentService.createTextOutput(JSON.stringify({ status: 'success' }))
+                             .setMimeType(ContentService.MimeType.JSON);
     } else {
-      throw new Error('PayPal Order Status is not COMPLETED: ' + orderDetails.status);
+        throw new Error('PayPal state not completed.');
     }
-
   } catch (error) {
-    Logger.log('Error: ' + error.message);
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: error.message }))
                          .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
 /**
- * Lấy Access Token dùng OAuth 2.0
+ * Xử lý lệnh thêm sản phẩm tự động từ tool submit-product.js (Nâng cấp Phase 1)
  */
-function getPayPalAccessToken() {
-  const auth = Utilities.base64Encode(CONFIG.PAYPAL_CLIENT_ID + ':' + CONFIG.PAYPAL_SECRET);
-  const options = {
-    method: 'post',
-    headers: {
-      'Authorization': 'Basic ' + auth,
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    payload: 'grant_type=client_credentials'
-  };
-  
-  const response = UrlFetchApp.fetch(CONFIG.PAYPAL_API + '/v1/oauth2/token', options);
-  const result = JSON.parse(response.getContentText());
-  return result.access_token;
-}
+function handleAddProduct(data) {
+  try {
+    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+    let sheet = ss.getSheetByName("Products");
+    
+    const COLUMNS = [
+      "ID", "Title", "Price", "Original Price", 
+      "Image URL", "Category", "Tags", "Description", "Download Link"
+    ];
 
-/**
- * Gọi PayPal API để lấy chi tiết Order thực tế
- */
-function verifyPayPalOrder(orderId, token) {
-  const options = {
-    method: 'get',
-    headers: {
-      'Authorization': 'Bearer ' + token,
-      'Content-Type': 'application/json'
+    if (!sheet) {
+      sheet = ss.insertSheet("Products");
+      sheet.appendRow(COLUMNS);
+      sheet.getRange(1, 1, 1, COLUMNS.length).setFontWeight("bold").setBackground("#f3f3f3");
+      sheet.setFrozenRows(1);
     }
-  };
-  
-  const response = UrlFetchApp.fetch(CONFIG.PAYPAL_API + '/v2/checkout/orders/' + orderId, options);
-  return JSON.parse(response.getContentText());
+    
+    const row = [
+      data.id,
+      data.title,
+      data.price || "$2.00",
+      data.originalPrice || "$5.00",
+      data.imagePath,
+      data.category,
+      Array.isArray(data.tags) ? data.tags.join(", ") : data.tags,
+      data.description || "",
+      data.downloadUrl
+    ];
+
+    sheet.appendRow(row);
+    
+    // Xóa cache
+    CacheService.getScriptCache().remove("products_json");
+    
+    return ContentService.createTextOutput(JSON.stringify({ status: 'success' }))
+                         .setMimeType(ContentService.MimeType.JSON);
+    
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.message }))
+                         .setMimeType(ContentService.MimeType.JSON);
+  }
 }
 
-/**
- * Ghi log vào Google Sheet cá nhân
- */
-function logToGoogleSheet(originalData, paypalDetails) {
-  const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
-  const sheet = ss.getSheets()[0];
-  
-  sheet.appendRow([
-    new Date(), 
-    paypalDetails.id, 
-    originalData.payer_email, 
-    originalData.payer_name,
-    originalData.product_name,
-    paypalDetails.purchase_units[0].amount.value,
-    paypalDetails.purchase_units[0].amount.currency_code,
-    'Verified (COMPLETED)'
-  ]);
-}
-
-/**
- * Lấy link tải từ tab "Products" trên Google Sheet dựa vào tên sản phẩm.
- * Nếu không thấy, trả về null.
- */
 function getDownloadLinkFromSheet(productName) {
   try {
     const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
@@ -129,82 +139,38 @@ function getDownloadLinkFromSheet(productName) {
     if (!sheet) return null;
 
     const data = sheet.getDataRange().getValues();
-    // Bỏ qua dòng tiêu đề (row 0), duyệt từ row 1
     for (let i = 1; i < data.length; i++) {
-      const row = data[i];
-      // Cột A (row[0]) là Tên sản phẩm, Cột B (row[1]) là Link tải
-      if (row[0] === productName && row[1]) {
-        return row[1];
+      if (data[i][1] === productName) {
+        return data[i][8];
       }
     }
-  } catch (e) {
-    Logger.log("Lỗi khi tìm link từ sheet: " + e.message);
-  }
-  return null;
+  } catch (e) { return null; }
 }
 
-/**
- * Gửi email tự động kèm link tải
- */
+function getPayPalAccessToken() {
+  const auth = Utilities.base64Encode(CONFIG.PAYPAL_CLIENT_ID + ':' + CONFIG.PAYPAL_SECRET);
+  const options = {
+    method: 'post',
+    headers: { 'Authorization': 'Basic ' + auth, 'Content-Type': 'application/x-www-form-urlencoded' },
+    payload: 'grant_type=client_credentials'
+  };
+  const response = UrlFetchApp.fetch(CONFIG.PAYPAL_API + '/v1/oauth2/token', options);
+  return JSON.parse(response.getContentText()).access_token;
+}
+
+function verifyPayPalOrder(orderId, token) {
+  const options = { method: 'get', headers: { 'Authorization': 'Bearer ' + token } };
+  const response = UrlFetchApp.fetch(CONFIG.PAYPAL_API + '/v2/checkout/orders/' + orderId, options);
+  return JSON.parse(response.getContentText());
+}
+
+function logToGoogleSheet(originalData, paypalDetails) {
+  const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+  const sheet = ss.getSheets()[0];
+  sheet.appendRow([new Date(), paypalDetails.id, originalData.payer_email, originalData.payer_name, originalData.product_name, paypalDetails.purchase_units[0].amount.value, 'USD', 'Verified']);
+}
+
 function sendDownloadEmail(email, productName) {
-  const customLink = getDownloadLinkFromSheet(productName);
-  
-  // Ưu tiên link riêng trong tab Products, nếu không có thì dùng link Master Folder
-  const driveUrl = customLink || ('https://drive.google.com/drive/folders/' + CONFIG.DRIVE_FOLDER_ID);
-  
-  const subject = '[Easy to Print] Your Download Link for ' + productName;
-  const body = `Thank you for your purchase!\n\n` +
-               `Your digital files are ready for download at the link below:\n` +
-               `${driveUrl}\n\n` +
-               `Please Note: This link is for your personal use as per the license agreement.\n\n` +
-               `Best Regards,\nEasy to Print Team`;
-               
-  MailApp.sendEmail(email, subject, body);
+  const driveUrl = getDownloadLinkFromSheet(productName) || ('https://drive.google.com/drive/folders/' + CONFIG.DRIVE_FOLDER_ID);
+  MailApp.sendEmail(email, '[Easy to Print] Link for ' + productName, `Thanks for your purchase! Your folder: ${driveUrl}`);
 }
-
-/**
- * Xử lý lệnh thêm sản phẩm tự động từ tool submit-product.js
- */
-function handleAddProduct(data) {
-  try {
-    const productName = data.productName;
-    const downloadUrl = data.downloadUrl;
-    
-    if (!productName || !downloadUrl) {
-      return ContentService.createTextOutput(JSON.stringify({
-        status: 'error',
-        message: 'Missing productName or downloadUrl'
-      })).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
-    let sheet = ss.getSheetByName("Products");
-    
-    // Tự động tạo tab Products nếu chưa tồn tại
-    if (!sheet) {
-      sheet = ss.insertSheet("Products");
-      sheet.appendRow(["Product Name", "Download Link"]);
-      // Style header
-      sheet.getRange("A1:B1").setFontWeight("bold").setBackground("#f3f3f3");
-      // Mặc định cột rộng ra cho dễ nhìn
-      sheet.setColumnWidth(1, 400);
-      sheet.setColumnWidth(2, 600);
-    }
-    
-    // Thêm dòng mới
-    sheet.appendRow([productName, downloadUrl]);
-    
-    return ContentService.createTextOutput(JSON.stringify({
-      status: 'success',
-      message: 'Added product to Google Sheets successfully.'
-    })).setMimeType(ContentService.MimeType.JSON);
-    
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({
-      status: 'error',
-      message: err.message
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-

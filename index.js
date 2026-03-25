@@ -1,13 +1,91 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Search form interaction
+    // --- Phase 2: Dynamic Product Loading ---
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwBQdvEMfs43bA-tiHzKALERxhrPFIUK-IXkWOio3vLCe8QUXfyziGliwIkckFtt5mFLw/exec';
+    const CACHE_KEY = 'easy2print_products';
+    const CACHE_TTL = 120000; // 2 minutes
+
+    async function loadProducts() {
+        const grid = document.getElementById('product-grid');
+        const secondaryGrid = document.getElementById('secondary-product-grid');
+        if (!grid) return;
+
+        // Show loading state
+        grid.innerHTML = '<div class="loading-spinner">Loading products...</div>';
+
+        try {
+            let products = [];
+            const cached = localStorage.getItem(CACHE_KEY);
+            const cacheTime = localStorage.getItem(CACHE_KEY + '_time');
+
+            if (cached && cacheTime && (Date.now() - cacheTime < CACHE_TTL)) {
+                products = JSON.parse(cached);
+                console.log('Loaded from local cache');
+            } else {
+                const response = await fetch(API_URL);
+                products = await response.json();
+                localStorage.setItem(CACHE_KEY, JSON.stringify(products));
+                localStorage.setItem(CACHE_KEY + '_time', Date.now());
+                console.log('Loaded from API');
+            }
+
+            renderProducts(products);
+        } catch (error) {
+            console.error('Error loading products:', error);
+            grid.innerHTML = '<div class="error-msg">Failed to load products. Please refresh.</div>';
+        }
+    }
+
+    function renderProducts(products) {
+        const grid = document.getElementById('product-grid');
+        const secondaryGrid = document.getElementById('secondary-product-grid');
+        
+        if (!grid) return;
+        grid.innerHTML = '';
+        if (secondaryGrid) secondaryGrid.innerHTML = '';
+
+        products.forEach((product, index) => {
+            const tags = product.tags ? product.tags.split(',').map(t => t.trim()) : [];
+            const tagsDataAttr = tags.join(' ');
+            const hashtagsHtml = tags.map(t => `<span class="hashtag">#${t}</span>`).join('');
+            
+            const cardHtml = `
+                <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=${product.id}'" data-tags="${tagsDataAttr}">
+                    <div class="product-image-container">
+                        <img src="${product.image_url || product.image_path}" alt="${product.title}" loading="lazy">
+                        <div class="favorite-icon">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </div>
+                        <span class="stock-status">DIGITAL</span>
+                    </div>
+                    <div class="product-info">
+                        <h3>${product.title}</h3>
+                        <div class="product-price">${product.price} <span class="original-price">${product.original_price}</span></div>
+                        <div class="hashtags">${hashtagsHtml}</div>
+                    </div>
+                </div>
+            `;
+
+            // Split products between two grids for design variety if needed, or just fill the first
+            if (index < 5) {
+                grid.innerHTML += cardHtml;
+            } else if (secondaryGrid) {
+                secondaryGrid.innerHTML += cardHtml;
+            } else {
+                grid.innerHTML += cardHtml;
+            }
+        });
+    }
+
+    loadProducts();
+
+    // --- Original Interactions ---
     const searchForm = document.getElementById('search_form');
     const searchInput = searchForm.querySelector('input');
 
     searchForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const query = searchInput.value.trim().toLowerCase();
-        
         const cards = document.querySelectorAll('.product-card');
         const grid = document.querySelector('.product-grid');
         
@@ -20,17 +98,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     card.style.display = 'none';
                 }
             });
-            
-            if (grid) {
-                grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
-            // If empty, show all
             cards.forEach(card => card.style.display = 'block');
         }
     });
 
-    // Header scroll effect
     const header = document.querySelector('header');
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
@@ -40,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Smooth scroll for "Explore Now" button
     const heroBtn = document.querySelector('.hero-btn');
     if (heroBtn) {
         heroBtn.addEventListener('click', (e) => {
@@ -52,61 +124,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Newsletter subscription
     const newsletterForm = document.querySelector('.newsletter-form');
-    newsletterForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = newsletterForm.querySelector('input').value;
-        if (email) {
-            alert(`Thank you! We've sent a small gift to ${email}.`);
-            newsletterForm.reset();
-        }
-    });
-
-    // Product card hover micro-animations (handled via CSS Mostly)
-    // Adding some simple JS scale for extra "premium" feel if needed
-    const cards = document.querySelectorAll('.product-card');
-    cards.forEach(card => {
-        card.addEventListener('mouseenter', () => {
-            // Logic for hover if needed beyond CSS
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = newsletterForm.querySelector('input').value;
+            if (email) {
+                alert(`Thank you! We've sent a small gift to ${email}.`);
+                newsletterForm.reset();
+            }
         });
-    });
+    }
 });
 
-// Category filtering function
 window.filterCategory = function(e, category) {
     if (e) e.preventDefault();
     const cards = document.querySelectorAll('.product-card');
-    
     cards.forEach(card => {
         const tags = card.getAttribute('data-tags');
         if (!tags) return;
-        
         if (category === 'all' || tags.includes(category)) {
             card.style.display = 'block';
         } else {
             card.style.display = 'none';
         }
     });
-
-    // Optional: Smooth scroll down to products
     const grid = document.querySelector('.product-grid');
-    if (grid) {
-        grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
-// Modal Functions
 window.openModal = function(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
         modal.style.display = 'flex';
-        document.body.style.overflow = 'hidden'; // Prevent background scroll
+        document.body.style.overflow = 'hidden';
     }
 };
 
 window.closeModal = function(event, modalId) {
-    // If the click is on the background overlay (the modal itself)
     if (event.target.id === modalId) {
         document.getElementById(modalId).style.display = 'none';
         document.body.style.overflow = 'auto';
@@ -121,7 +176,6 @@ window.closeModalDirect = function(modalId) {
     }
 };
 
-// Also handle close on Esc key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         const activeModals = document.querySelectorAll('.universal-modal[style*="display: flex"]');
