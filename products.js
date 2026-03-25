@@ -241,6 +241,14 @@ products["welcome-floral-door-hanger"] = {
     tags: ["svg", "laser"]
 };
 
+products["miller-personal-digital-decor"] = {
+    title: "Miller Personal Digital Decor | Exclusive Print",
+    price: "$2.00",
+    image: "assets/miller-personal-digital-decor.jpg",
+    category: "Wall Art > Abstract",
+    tags: ["art", "wallart"]
+};
+
 if (typeof window !== 'undefined') {
     window.productDatabase = products;
 }

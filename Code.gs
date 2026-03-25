@@ -113,10 +113,20 @@ function logToGoogleSheet(originalData, paypalDetails) {
 }
 
 /**
+ * Danh sách link tải riêng cho từng sản phẩm (nếu có).
+ * Key: Tên sản phẩm chính xác như trên web.
+ * Value: Link Google Drive hoặc Dropbox.
+ */
+const PRODUCT_LINKS = {
+  "Miller Personal Digital Decor | Exclusive Print": "https://www.dropbox.com/scl/fo/n8dvhyd9hfp727kp1vu8h/AMWyBidXZlHTK2nxt8gB2cg?rlkey=ed0dbnfhz0q2h9j5deisj5uo0&st=4p4tefds&dl=0"
+};
+
+/**
  * Gửi email tự động kèm link Drive
  */
 function sendDownloadEmail(email, productName) {
-  const driveUrl = 'https://drive.google.com/drive/folders/' + CONFIG.DRIVE_FOLDER_ID;
+  // Ưu tiên link riêng của sản phẩm, nếu không có thì dùng link Folder dùng chung
+  const driveUrl = PRODUCT_LINKS[productName] || ('https://drive.google.com/drive/folders/' + CONFIG.DRIVE_FOLDER_ID);
   
   const subject = '[Easy to Print] Your Download Link for ' + productName;
   const body = `Thank you for your purchase!\n\n` +
