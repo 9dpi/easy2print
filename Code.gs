@@ -113,20 +113,38 @@ function logToGoogleSheet(originalData, paypalDetails) {
 }
 
 /**
- * Danh sách link tải riêng cho từng sản phẩm (nếu có).
- * Key: Tên sản phẩm chính xác như trên web.
- * Value: Link Google Drive hoặc Dropbox.
+ * Lấy link tải từ tab "Products" trên Google Sheet dựa vào tên sản phẩm.
+ * Nếu không thấy, trả về null.
  */
-const PRODUCT_LINKS = {
-  "Miller Personal Digital Decor | Exclusive Print": "https://www.dropbox.com/scl/fo/n8dvhyd9hfp727kp1vu8h/AMWyBidXZlHTK2nxt8gB2cg?rlkey=ed0dbnfhz0q2h9j5deisj5uo0&st=4p4tefds&dl=0"
-};
+function getDownloadLinkFromSheet(productName) {
+  try {
+    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+    const sheet = ss.getSheetByName("Products");
+    if (!sheet) return null;
+
+    const data = sheet.getDataRange().getValues();
+    // Bỏ qua dòng tiêu đề (row 0), duyệt từ row 1
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      // Cột A (row[0]) là Tên sản phẩm, Cột B (row[1]) là Link tải
+      if (row[0] === productName && row[1]) {
+        return row[1];
+      }
+    }
+  } catch (e) {
+    Logger.log("Lỗi khi tìm link từ sheet: " + e.message);
+  }
+  return null;
+}
 
 /**
- * Gửi email tự động kèm link Drive
+ * Gửi email tự động kèm link tải
  */
 function sendDownloadEmail(email, productName) {
-  // Ưu tiên link riêng của sản phẩm, nếu không có thì dùng link Folder dùng chung
-  const driveUrl = PRODUCT_LINKS[productName] || ('https://drive.google.com/drive/folders/' + CONFIG.DRIVE_FOLDER_ID);
+  const customLink = getDownloadLinkFromSheet(productName);
+  
+  // Ưu tiên link riêng trong tab Products, nếu không có thì dùng link Master Folder
+  const driveUrl = customLink || ('https://drive.google.com/drive/folders/' + CONFIG.DRIVE_FOLDER_ID);
   
   const subject = '[Easy to Print] Your Download Link for ' + productName;
   const body = `Thank you for your purchase!\n\n` +
@@ -137,3 +155,4 @@ function sendDownloadEmail(email, productName) {
                
   MailApp.sendEmail(email, subject, body);
 }
+
