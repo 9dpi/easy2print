@@ -4,10 +4,10 @@
  * Tự động thêm sản phẩm mới lên website Easy to Print.
  *
  * Cách dùng:
- * 1. Bỏ file ảnh (.png, .jpg, .webp) vào thư mục Download/
+ * 1. Bỏ file ảnh (.png, .jpg) VÀ file text (.txt chứa link tải) vào thư mục Download/
  * 2. Chạy: node submit-product.js
- * 3. Nhập thông tin sản phẩm theo hướng dẫn trên màn hình.
- * 4. Tool sẽ tự động cập nhật products.js, index.html, và copy ảnh vào assets/.
+ * 3. Nhập thông tin sản phẩm.
+ * 4. Tool sẽ tự động cập nhật web và GHI VÀO GOOGLE SHEETS!
  */
 
 const fs = require('fs');
@@ -19,6 +19,7 @@ const DOWNLOAD_DIR = path.join(__dirname, 'Download');
 const ASSETS_DIR = path.join(__dirname, 'assets');
 const PRODUCTS_FILE = path.join(__dirname, 'products.js');
 const INDEX_FILE = path.join(__dirname, 'index.html');
+const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwBQdvEMfs43bA-tiHzKALERxhrPFIUK-IXkWOio3vLCe8QUXfyziGliwIkckFtt5mFLw/exec';
 const VALID_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp'];
 const AVAILABLE_TAGS = ['svg', 'art', 'bundle', 'printable', 'tshirt', 'wallart', 'accessories', 'gift'];
 const DEFAULT_PRICE = '$2.00';
@@ -85,7 +86,7 @@ async function promptUserForDetails(rl, files) {
     }
 
     // Product title
-    const title = await ask(rl, '📝 Product Title (e.g. "Boho Beach Sunset Art | Wall Decor"): ');
+    const title = await ask(rl, '📝 Product Title: ');
     if (!title) {
         console.log('❌ Title is required. Exiting.');
         return null;
@@ -107,7 +108,38 @@ async function promptUserForDetails(rl, files) {
     // Generate ID from title
     const id = slugify(title.split('|')[0].trim());
 
-    return { id, title, category: category || 'Digital Downloads', tags, selectedFile };
+    // --- Search for Download URL from a .txt file ---
+    let downloadUrl = null;
+    let txtFileToDelete = null;
+    const baseName = path.parse(selectedFile).name;
+    const possibleTxtFiles = [
+        `${baseName}_Download.txt`,
+        `${baseName}.txt`,
+        `${baseName} Download.txt`
+    ];
+
+    for (const txt of possibleTxtFiles) {
+        const txtPath = path.join(DOWNLOAD_DIR, txt);
+        if (fs.existsSync(txtPath)) {
+            const txtContent = fs.readFileSync(txtPath, 'utf8');
+            const urlMatch = txtContent.match(/https?:\/\/[^\s]+/);
+            if (urlMatch) {
+                downloadUrl = urlMatch[0];
+                txtFileToDelete = txt;
+                console.log(`\n🔗 Automatically detected Download URL from ${txt}:`);
+                console.log(`   ${downloadUrl}`);
+                break;
+            }
+        }
+    }
+
+    // Manual link if not found
+    if (!downloadUrl) {
+        const userInputUrl = await ask(rl, '\n🔗 Enter specific Download URL (Dropbox/Drive) or press Enter to skip: ');
+        if (userInputUrl) downloadUrl = userInputUrl;
+    }
+
+    return { id, title, category: category || 'Digital Downloads', tags, selectedFile, downloadUrl, txtFileToDelete };
 }
 
 // --- Step 3a: Copy image to assets ---
@@ -118,7 +150,7 @@ function copyImageToAssets(selectedFile, productId) {
     const destPath = path.join(ASSETS_DIR, newFileName);
 
     fs.copyFileSync(srcPath, destPath);
-    console.log(`\n✅ Image copied: Download/${selectedFile} → assets/${newFileName}`);
+    console.log(`✅ Image copied: Download/${selectedFile} → assets/${newFileName}`);
     return `assets/${newFileName}`;
 }
 
@@ -135,7 +167,6 @@ function updateProductsJs(product) {
     tags: [${tagsStr}]
 };`;
 
-    // Insert before the last line (window.productDatabase assignment)
     const insertMarker = 'if (typeof window !== \'undefined\')';
     if (content.includes(insertMarker)) {
         content = content.replace(insertMarker, newEntry + '\n\n' + insertMarker);
@@ -169,28 +200,16 @@ function updateIndexHtml(product) {
                 </div>
             </div>`;
 
-    // Insert before the closing </div> of the "Latest from Our Design Community" product-grid
-    // Strategy: Find the second product-grid's closing tag
     const sections = content.split('product-grid');
     if (sections.length >= 3) {
-        // Find the second product-grid section and insert before its closing </div>
         const secondGridStart = content.indexOf('product-grid', content.indexOf('product-grid') + 1);
-        const gridContent = content.substring(secondGridStart);
-        // Find the closing </div> of that grid followed by </section>
         const closingPattern = '</div>\r\n    </section>';
         const closingPatternAlt = '</div>\n    </section>';
-        let insertPos;
         
-        const afterSecondGrid = content.indexOf(closingPattern, secondGridStart);
-        const afterSecondGridAlt = content.indexOf(closingPatternAlt, secondGridStart);
+        let insertPos = content.indexOf(closingPattern, secondGridStart);
+        if (insertPos === -1) insertPos = content.indexOf(closingPatternAlt, secondGridStart);
         
-        if (afterSecondGrid !== -1) {
-            insertPos = afterSecondGrid;
-        } else if (afterSecondGridAlt !== -1) {
-            insertPos = afterSecondGridAlt;
-        }
-
-        if (insertPos) {
+        if (insertPos !== -1) {
             content = content.substring(0, insertPos) + '\n' + newCard + '\n        ' + content.substring(insertPos);
             fs.writeFileSync(INDEX_FILE, content, 'utf-8');
             console.log(`✅ index.html updated with new product card`);
@@ -198,25 +217,67 @@ function updateIndexHtml(product) {
         }
     }
 
-    // Fallback: insert before the last </main>
     const mainClose = content.lastIndexOf('</main>');
     if (mainClose !== -1) {
         const lastGridClose = content.lastIndexOf('</div>', mainClose);
         content = content.substring(0, lastGridClose) + '\n' + newCard + '\n        ' + content.substring(lastGridClose);
         fs.writeFileSync(INDEX_FILE, content, 'utf-8');
-        console.log(`✅ index.html updated with new product card (fallback)`);
+        console.log(`✅ index.html updated!`);
         return true;
     }
 
-    console.log('⚠️  Could not auto-insert into index.html. Please paste manually.');
     return false;
 }
 
-// --- Step 3d: Cleanup ---
-function cleanupDownload(selectedFile) {
+// --- Step 3d: Google Sheets Sync ---
+async function syncToGoogleSheets(productName, downloadUrl) {
+    if (!downloadUrl) return;
+
+    console.log(`\n☁️  Syncing to Google Sheets...`);
+    const payload = JSON.stringify({
+        action: 'addProduct',
+        productName: productName,
+        downloadUrl: downloadUrl
+    });
+
+    try {
+        const response = await fetch(APP_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload
+        });
+        
+        // Follow redirect manually if fetch natively fails CORS redirect on server
+        if (response.type === 'opaqueredirect' || response.redirected) {
+             console.log(`✅ Google Sheets sync sent successfully!`);
+             return;
+        }
+
+        const result = await response.json();
+        if (result.status === 'success') {
+            console.log(`✅ Google Sheets sync successful! Row added to 'Products' tab.`);
+        } else {
+            console.log(`⚠️  Google Sheets sync returned: ${result.message}`);
+        }
+    } catch (err) {
+        console.log(`❌ Google Sheets sync failed: ${err.message} (Double check you deployed Code.gs)`);
+    }
+}
+
+// --- Step 3e: Cleanup ---
+function cleanupDownload(selectedFile, txtFileToDelete) {
+    console.log('');
     const srcPath = path.join(DOWNLOAD_DIR, selectedFile);
     fs.unlinkSync(srcPath);
     console.log(`🗑️  Cleaned up: Download/${selectedFile}`);
+    
+    if (txtFileToDelete) {
+        const txtPath = path.join(DOWNLOAD_DIR, txtFileToDelete);
+        if (fs.existsSync(txtPath)) {
+            fs.unlinkSync(txtPath);
+            console.log(`🗑️  Cleaned up: Download/${txtFileToDelete}`);
+        }
+    }
 }
 
 // --- Main ---
@@ -248,6 +309,7 @@ async function main() {
         console.log(`   Tags:     ${details.tags.map(t => '#' + t).join(', ')}`);
         console.log(`   Image:    ${details.selectedFile}`);
         console.log(`   Price:    ${DEFAULT_PRICE}`);
+        if (details.downloadUrl) console.log(`   DownURL:  ${details.downloadUrl}`);
         console.log('────────────────────────────────────');
 
         const confirm = await ask(rl, '\n🚀 Submit this product? (y/n): ');
@@ -265,7 +327,8 @@ async function main() {
 
         updateProductsJs(product);
         updateIndexHtml(product);
-        cleanupDownload(details.selectedFile);
+        await syncToGoogleSheets(details.title, details.downloadUrl);
+        cleanupDownload(details.selectedFile, details.txtFileToDelete);
 
         console.log('\n╔══════════════════════════════════════════════╗');
         console.log('║  🎉 PRODUCT SUBMITTED SUCCESSFULLY!          ║');
@@ -276,7 +339,7 @@ async function main() {
         console.log('   git add . && git commit -m "Add product: ' + details.id + '" && git push origin main\n');
 
     } catch (err) {
-        console.error('❌ Error:', err.message);
+        console.error('\n❌ Error:', err.message);
     } finally {
         rl.close();
     }

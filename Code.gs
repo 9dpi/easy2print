@@ -20,6 +20,12 @@ const CONFIG = {
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
+    
+    // Xử lý yêu cầu tự động chèn sản phẩm từ tool submit-product.js
+    if (data.action === "addProduct") {
+      return handleAddProduct(data);
+    }
+    
     const transactionId = data.transaction_id;
     const payerEmail = data.payer_email;
 
@@ -155,4 +161,50 @@ function sendDownloadEmail(email, productName) {
                
   MailApp.sendEmail(email, subject, body);
 }
+
+/**
+ * Xử lý lệnh thêm sản phẩm tự động từ tool submit-product.js
+ */
+function handleAddProduct(data) {
+  try {
+    const productName = data.productName;
+    const downloadUrl = data.downloadUrl;
+    
+    if (!productName || !downloadUrl) {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'error',
+        message: 'Missing productName or downloadUrl'
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+    let sheet = ss.getSheetByName("Products");
+    
+    // Tự động tạo tab Products nếu chưa tồn tại
+    if (!sheet) {
+      sheet = ss.insertSheet("Products");
+      sheet.appendRow(["Product Name", "Download Link"]);
+      // Style header
+      sheet.getRange("A1:B1").setFontWeight("bold").setBackground("#f3f3f3");
+      // Mặc định cột rộng ra cho dễ nhìn
+      sheet.setColumnWidth(1, 400);
+      sheet.setColumnWidth(2, 600);
+    }
+    
+    // Thêm dòng mới
+    sheet.appendRow([productName, downloadUrl]);
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'success',
+      message: 'Added product to Google Sheets successfully.'
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: err.message
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
 
