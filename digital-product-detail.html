@@ -124,8 +124,7 @@
                 <img src="assets/floral-door-hanger.png" alt="Welcome To Our Home Floral Door Hanger SVG">
             </div>
             <div class="thumbnails">
-                <div class="thumb active"><img src="assets/floral-door-hanger.png"></div>
-                <div class="thumb"><img src="assets/canvas-art.png"></div>
+                <div class="thumb active"><img src="" alt="Thumbnail 1"></div>
             </div>
         </div>
 
@@ -310,11 +309,23 @@
                 }
 
                 if (product.description) {
-                    document.querySelector('.full-desc').innerText = product.description;
+                    const descContainer = document.querySelector('.full-desc');
+                    descContainer.innerText = product.description;
+                    
+                    // Thêm hashtags nếu có (giống trang index)
+                    if (product.tags) {
+                        const tags = product.tags.split(',').map(t => t.trim());
+                        const hashtagsHtml = '<div class="hashtags-container" style="margin-top:20px">' + 
+                            tags.map(t => `<span class="hashtag">#${t}</span>`).join(' ') + '</div>';
+                        descContainer.innerHTML += hashtagsHtml;
+                    }
                 }
                 
                 const thumbs = document.querySelectorAll('.thumb img');
-                if (thumbs.length > 0) thumbs[0].src = product.image_url || product.image_path;
+                if (thumbs.length > 0) {
+                    thumbs[0].src = product.image_url || product.image_path;
+                    thumbs[0].alt = product.title;
+                }
             }
         } catch (e) {
             console.error('Error loading detail:', e);
