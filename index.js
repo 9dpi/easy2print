@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Phase 2: Dynamic Product Loading ---
     const API_URL = 'https://script.google.com/macros/s/AKfycbwBQdvEMfs43bA-tiHzKALERxhrPFIUK-IXkWOio3vLCe8QUXfyziGliwIkckFtt5mFLw/exec';
-    const CACHE_KEY = 'easy2print_products';
+    const CACHE_KEY = 'easy_embroidery_products';
     const CACHE_TTL = 120000; // 2 minutes
 
     async function loadProducts() {
