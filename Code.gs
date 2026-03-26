@@ -51,6 +51,21 @@ function doPost(e) {
     if (data.action === "addProduct") {
       return handleAddProduct(data);
     }
+
+    if (data.action === "submitReview") {
+      const adminEmail = "vuquangcuong@gmail.com";
+      const subject = `⭐ New Review for ${data.product}`;
+      const body = `
+        New Review Submitted:
+        - Product: ${data.product}
+        - Customer: ${data.name}
+        - Rating: ${data.rating} Stars
+        - Comment: ${data.comment}
+      `;
+      MailApp.sendEmail(adminEmail, subject, body);
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success' }))
+                           .setMimeType(ContentService.MimeType.JSON);
+    }
     
     const transactionId = data.transaction_id || data.id;
     const payerEmail = data.payer_email || (data.payer ? data.payer.email_address : "");

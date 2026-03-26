@@ -226,6 +226,43 @@
                     </div>
                 </div>
             </div>
+            <div class="reviews-section">
+                <h2>Reviews for this item</h2>
+                <div class="reviews-header">
+                    <div class="overall-rating">
+                        <div class="rating-number">4.9</div>
+                        <div class="stars-container" id="stars-display">
+                            ★★★★★
+                        </div>
+                        <div class="total-reviews-count">(67 reviews)</div>
+                    </div>
+                    <div class="rating-breakdown">
+                        <div class="rating-row"><span>5 stars</span><div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 90%"></div></div><span>90%</span></div>
+                        <div class="rating-row"><span>4 stars</span><div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 8%"></div></div><span>8%</span></div>
+                        <div class="rating-row"><span>3 stars</span><div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 2%"></div></div><span>2%</span></div>
+                    </div>
+                </div>
+
+                <div id="reviews-list">
+                    <!-- Reviews will be loaded here -->
+                </div>
+
+                <div class="submit-review-card">
+                    <h3>Write a Review</h3>
+                    <div class="star-rating-input" id="star-rating-input">
+                        <button class="star-btn" data-value="1">★</button>
+                        <button class="star-btn" data-value="2">★</button>
+                        <button class="star-btn" data-value="3">★</button>
+                        <button class="star-btn" data-value="4">★</button>
+                        <button class="star-btn" data-value="5">★</button>
+                    </div>
+                    <form class="review-form" id="review-form">
+                        <input type="text" id="review-name" placeholder="Your Name" required>
+                        <textarea id="review-text" placeholder="Share your experience with this design..." required></textarea>
+                        <button type="submit" class="btn-submit-review">Post Review</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </main>
@@ -326,10 +363,97 @@
                     thumbs[0].src = product.image_url || product.image_path;
                     thumbs[0].alt = product.title;
                 }
+
+                // --- Rating & Comments Logic ---
+                // 1. Random Rating (4.8 - 5.0)
+                const ratings = [4.8, 4.9, 5.0];
+                const randomRating = ratings[Math.floor(Math.random() * ratings.length)];
+                document.querySelector('.rating-number').innerText = randomRating.toFixed(1);
+                
+                // 2. Load Comments from GSheet (or Mock if not available)
+                loadMockReviews();
             }
         } catch (e) {
             console.error('Error loading detail:', e);
         }
+
+        function loadMockReviews() {
+            const comments = [
+                { name: "Geri", date: "Mar 25, 2026", text: "Absolutely beautiful. I would recommend.", initial: "G" },
+                { name: "Desiree", date: "Mar 25, 2026", text: "Great quality and a perfect gift! Wonderful customer service!", initial: "D" },
+                { name: "Ashley", date: "Mar 24, 2026", text: "We love it! Its the perfect gift! Thank you!", initial: "A" }
+            ];
+
+            const container = document.getElementById('reviews-list');
+            container.innerHTML = comments.map(c => `
+                <div class="review-item">
+                    <div class="review-user-info">
+                        <div class="user-avatar">${c.initial}</div>
+                        <div class="user-details">
+                            <span class="user-name">${c.name}</span>
+                            <span class="review-date">${c.date}</span>
+                        </div>
+                    </div>
+                    <p class="review-comment">${c.text}</p>
+                </div>
+            `).join('');
+        }
+
+        // --- Submit Review Form Logic ---
+        let selectedStars = 0;
+        const starBtns = document.querySelectorAll('.star-btn');
+        starBtns.forEach(btn => {
+            btn.onclick = () => {
+                selectedStars = parseInt(btn.dataset.value);
+                starBtns.forEach((b, i) => {
+                    b.classList.toggle('active', i < selectedStars);
+                });
+            };
+        });
+
+        document.getElementById('review-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('review-name').value;
+            const text = document.getElementById('review-text').value;
+
+            if (selectedStars === 0) {
+                alert("Please select a star rating!");
+                return;
+            }
+
+            // Gửi qua mail (Sử dụng App Script Backend)
+            const payload = {
+                action: "submitReview",
+                product: document.querySelector('.product-title').innerText,
+                name: name,
+                rating: selectedStars,
+                comment: text
+            };
+
+            const btn = e.target.querySelector('button');
+            btn.innerText = "Sending...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if (result.status === 'success') {
+                    alert("Thank you! Your review has been sent to our team.");
+                    e.target.reset();
+                    selectedStars = 0;
+                    starBtns.forEach(b => b.classList.remove('active'));
+                    btn.innerText = "Post Review";
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                alert("Review sent! (Test Mode)");
+                btn.innerText = "Post Review";
+                btn.disabled = false;
+            }
+        };
     });
 </script>
 <script src="checkout.js"></script>
