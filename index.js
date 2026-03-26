@@ -41,15 +41,19 @@ document.addEventListener('DOMContentLoaded', () => {
         grid.innerHTML = '';
         if (secondaryGrid) secondaryGrid.innerHTML = '';
 
-        products.forEach((product, index) => {
+        // Clone and Shuffle for "Suggested"
+        const shuffled = [...products].sort(() => 0.5 - Math.random());
+        const suggested = shuffled.slice(0, 5);
+        const others = shuffled.slice(5);
+
+        const createCard = (product) => {
             const tags = product.tags ? product.tags.split(',').map(t => t.trim()) : [];
             const tagsDataAttr = tags.join(' ');
             const hashtagsHtml = tags.map(t => `<span class="hashtag">#${t}</span>`).join('');
-            
             const priceFormatted = formatPrice(product.price);
             const origFormatted = product.original_price ? formatPrice(product.original_price) : '';
             
-            const cardHtml = `
+            return `
                 <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=${product.id}'" data-tags="${tagsDataAttr}">
                     <div class="product-image-container">
                         <img src="${product.image_url || product.image_path}" alt="${product.title}" loading="lazy">
@@ -65,16 +69,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             `;
+        };
 
-            // Split products between two grids for design variety if needed, or just fill the first
-            if (index < 5) {
-                grid.innerHTML += cardHtml;
-            } else if (secondaryGrid) {
-                secondaryGrid.innerHTML += cardHtml;
-            } else {
-                grid.innerHTML += cardHtml;
-            }
-        });
+        // Render Suggested (Grid 1)
+        suggested.forEach(p => grid.innerHTML += createCard(p));
+
+        // Render Others (Grid 2)
+        if (secondaryGrid) {
+            others.forEach(p => secondaryGrid.innerHTML += createCard(p));
+        }
     }
 
     loadProducts();
