@@ -126,6 +126,70 @@
             <div class="thumbnails">
                 <div class="thumb active"><img src="" alt="Thumbnail 1"></div>
             </div>
+
+            <!-- Reviews section moved here (Left side under gallery) -->
+            <div class="reviews-section">
+                <h2>Reviews for this item</h2>
+                <div class="buyer-highlights">
+                    <strong>Buyer highlights, summarized by AI:</strong> 
+                    <span class="highlight-tags">Gift-worthy • Cute • Would recommend • As described • Love it • Fast shipping • Beautiful</span>
+                </div>
+
+                <div class="rating-overview-row">
+                    <div class="main-score">
+                        <div class="main-score-num">4.8</div>
+                        <div class="score-stars-col">
+                            <div class="main-score-stars">★★★★★</div>
+                            <span class="avg-text">Item average (67 reviews)</span>
+                        </div>
+                    </div>
+
+                    <div class="circle-score-badges">
+                        <div class="score-badge">
+                            <div class="score-circle">4.8</div>
+                            <span>Item quality</span>
+                        </div>
+                        <div class="score-badge">
+                            <div class="score-circle">5.0</div>
+                            <span>Shipping</span>
+                        </div>
+                        <div class="score-badge">
+                            <div class="score-circle">4.9</div>
+                            <span>Customer service</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="review-filters">
+                    <button class="filter-btn">Suggested ▾</button>
+                    <button class="filter-btn">Description accuracy (11)</button>
+                    <button class="filter-btn">Quality (12)</button>
+                    <button class="filter-btn">Seller service (6)</button>
+                    <button class="filter-btn">Shipping & Packaging (7)</button>
+                </div>
+
+                <div id="reviews-list">
+                    <!-- Dynamic reviews will be injected here -->
+                </div>
+
+                <button class="view-all-reviews-btn">View all reviews for this item</button>
+
+                <div class="submit-review-card">
+                    <h3>Write a Review</h3>
+                    <div class="star-rating-input" id="star-rating-input">
+                        <button class="star-btn" data-value="1">★</button>
+                        <button class="star-btn" data-value="2">★</button>
+                        <button class="star-btn" data-value="3">★</button>
+                        <button class="star-btn" data-value="4">★</button>
+                        <button class="star-btn" data-value="5">★</button>
+                    </div>
+                    <form class="review-form" id="review-form">
+                        <input type="text" id="review-name" placeholder="Your Name" required>
+                        <textarea id="review-text" placeholder="Share your experience with this design..." required></textarea>
+                        <button type="submit" class="btn-submit-review">Post Review</button>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <div class="product-details">
@@ -224,68 +288,6 @@
                         <span class="hashtag">#HomeEmbroidery</span>
                         <span class="hashtag">#EmbroideryForBeginners</span>
                     </div>
-                </div>
-            </div>
-            <div class="reviews-section">
-                <h2>Reviews for this item</h2>
-                <div class="buyer-highlights">
-                    <strong>Buyer highlights, summarized by AI:</strong> 
-                    <span class="highlight-tags">Gift-worthy • Cute • Would recommend • As described • Love it • Fast shipping • Beautiful</span>
-                </div>
-
-                <div class="rating-overview-row">
-                    <div class="main-score">
-                        <div class="main-score-num">4.8</div>
-                        <div class="score-stars-col">
-                            <div class="main-score-stars">★★★★★</div>
-                            <span class="avg-text">Item average (67 reviews)</span>
-                        </div>
-                    </div>
-
-                    <div class="circle-score-badges">
-                        <div class="score-badge">
-                            <div class="score-circle">4.8</div>
-                            <span>Item quality</span>
-                        </div>
-                        <div class="score-badge">
-                            <div class="score-circle">5.0</div>
-                            <span>Shipping</span>
-                        </div>
-                        <div class="score-badge">
-                            <div class="score-circle">4.9</div>
-                            <span>Customer service</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="review-filters">
-                    <button class="filter-btn">Suggested ▾</button>
-                    <button class="filter-btn">Description accuracy (11)</button>
-                    <button class="filter-btn">Quality (12)</button>
-                    <button class="filter-btn">Seller service (6)</button>
-                    <button class="filter-btn">Shipping & Packaging (7)</button>
-                </div>
-
-                <div id="reviews-list">
-                    <!-- Dynamic reviews will be injected here -->
-                </div>
-
-                <button class="view-all-reviews-btn">View all reviews for this item</button>
-
-                <div class="submit-review-card">
-                    <h3>Write a Review</h3>
-                    <div class="star-rating-input" id="star-rating-input">
-                        <button class="star-btn" data-value="1">★</button>
-                        <button class="star-btn" data-value="2">★</button>
-                        <button class="star-btn" data-value="3">★</button>
-                        <button class="star-btn" data-value="4">★</button>
-                        <button class="star-btn" data-value="5">★</button>
-                    </div>
-                    <form class="review-form" id="review-form">
-                        <input type="text" id="review-name" placeholder="Your Name" required>
-                        <textarea id="review-text" placeholder="Share your experience with this design..." required></textarea>
-                        <button type="submit" class="btn-submit-review">Post Review</button>
-                    </form>
                 </div>
             </div>
         </div>

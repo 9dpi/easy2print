@@ -14,12 +14,10 @@
 }
 
 .product-gallery {
-    flex: 1.2;
+    flex: 1.5;
     background: #fff;
     border-radius: 20px;
     overflow: hidden;
-    position: sticky;
-    top: 100px;
 }
 
 .main-image {
