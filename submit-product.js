@@ -11,6 +11,7 @@ const path = require('path');
 const DEEPSEEK_API_KEY = 'sk-e2cfceecd3724eaf97cd27f5ebe04559'; // Nhập API Key của bạn vào đây
 const DOWNLOAD_DIR = path.join(__dirname, 'Download');
 const ASSETS_DIR = path.join(__dirname, 'assets');
+const GDRIVE_SYNC_DIR = 'G:\\My Drive\\easy2print'; // Thư mục Google Drive Desktop của bạn
 const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwBQdvEMfs43bA-tiHzKALERxhrPFIUK-IXkWOio3vLCe8QUXfyziGliwIkckFtt5mFLw/exec';
 const VALID_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.svg'];
 
@@ -139,9 +140,19 @@ async function main() {
         // 1. Kiểm tra file .dst trong thư mục
         const dstFile = files.find(f => path.parse(f).name === baseName && path.extname(f).toLowerCase() === '.dst');
         if (dstFile) {
-            downloadUrl = `[File DST Sẵn Sàng] ${dstFile}`; // Sau này có thể upload Drive tự động
+            const srcPath = path.join(DOWNLOAD_DIR, dstFile);
+            const destPath = path.join(GDRIVE_SYNC_DIR, dstFile);
+            
+            // Tự động copy vào Drive Desktop
+            if (fs.existsSync(GDRIVE_SYNC_DIR)) {
+                fs.copyFileSync(srcPath, destPath);
+                console.log(`🚀 Đã đồng bộ file thêu lên Drive: ${dstFile}`);
+            } else {
+                console.log(`⚠️ Không tìm thấy ổ G:\\. Hãy đảm bảo Google Drive Desktop đang chạy!`);
+            }
+
+            downloadUrl = `[File Drive Sẵn Sàng] ${dstFile}`; 
             fileToDelete.push(dstFile);
-            console.log(`📦 Đã tìm thấy file thêu: ${dstFile}`);
         }
 
         // 2. Tìm link trong file .txt (nếu có)

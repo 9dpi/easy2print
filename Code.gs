@@ -7,7 +7,7 @@ const CONFIG = {
   PAYPAL_CLIENT_ID: 'YOUR_PAYPAL_CLIENT_ID',
   PAYPAL_SECRET: 'YOUR_PAYPAL_SECRET',
   PAYPAL_API: 'https://api-m.sandbox.paypal.com',
-  SHEET_ID: 'YOUR_GOOGLE_SHEET_ID',
+  SHEET_ID: '1UAlwooykAXCkmDajDp6KgQqMxL2z8FCTeR_CBE7bTjo',
   DRIVE_FOLDER_ID: 'YOUR_GOOGLE_DRIVE_FOLDER_ID'
 };
 
@@ -16,15 +16,6 @@ const CONFIG = {
  * Có tích hợp CacheService để tăng tốc độ phản hồi.
  */
 function doGet(e) {
-  // Cache tạm thời bị tắt để debug/cập nhật realtime
-  /*
-  const cache = CacheService.getScriptCache();
-  const cachedData = cache.get("products_json");
-  if (cachedData != null) {
-    return ContentService.createTextOutput(cachedData).setMimeType(ContentService.MimeType.JSON);
-  }
-  */
-
   try {
     const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
     const sheet = ss.getSheetByName("Products");
@@ -46,9 +37,6 @@ function doGet(e) {
     }
 
     const finalJson = JSON.stringify(products);
-    // Lưu vào cache trong 5 phút (300 giây)
-    cache.put("products_json", finalJson, 300);
-    
     return ContentService.createTextOutput(finalJson).setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: error.message }))
@@ -140,13 +128,43 @@ function getDownloadLinkFromSheet(productName) {
     const sheet = ss.getSheetByName("Products");
     if (!sheet) return null;
 
+    const query = (productName || "").toString().trim().toLowerCase();
     const data = sheet.getDataRange().getValues();
+    
+    // 1. Ưu tiên kiểm tra link đã dán sẵn trong GSheet (Cột I)
     for (let i = 1; i < data.length; i++) {
-      if (data[i][1] === productName) {
-        return data[i][8];
+      const rowTitle = (data[i][1] || "").toString().trim().toLowerCase();
+      if (rowTitle === query || query.includes(rowTitle)) {
+        const linkInSheet = data[i][8]; 
+        if (linkInSheet && linkInSheet.toString().startsWith("http")) {
+           return linkInSheet;
+        }
       }
     }
-  } catch (e) { return null; }
+
+    // 2. TỰ ĐỘNG QUÉT DRIVER (Cực kỳ thông minh)
+    // Nếu GSheet chưa có link, hệ thống sẽ tự vào thư mục Drive để tìm file trùng tên
+    Logger.log("🔎 Đang tự động tìm file trên Drive cho: " + productName);
+    const folder = DriveApp.getFolderById(CONFIG.DRIVE_FOLDER_ID);
+    const files = folder.getFiles();
+    
+    while (files.hasNext()) {
+      const file = files.next();
+      const fileName = file.getName().toLowerCase();
+      
+      // Nếu tên file chứa tên sản phẩm (vd: "hoa_hong.dst" chứa "hoa hong")
+      if (fileName.includes(query.replace(/\s+/g, '_')) || fileName.includes(query)) {
+        Logger.log("🎯 Đã tự động tìm thấy file: " + file.getName());
+        return file.getDownloadUrl().replace("?e=download", ""); // Lấy link tải trực tiếp
+      }
+    }
+
+    Logger.log("⚠️ Không tìm thấy file lẻ trên Drive. Trả về link thư mục tổng.");
+    return null;
+  } catch (e) { 
+    Logger.log("❌ Lỗi tìm kiếm: " + e.message);
+    return null; 
+  }
 }
 
 function getPayPalAccessToken() {
@@ -172,7 +190,59 @@ function logToGoogleSheet(originalData, paypalDetails) {
   sheet.appendRow([new Date(), paypalDetails.id, originalData.payer_email, originalData.payer_name, originalData.product_name, paypalDetails.purchase_units[0].amount.value, 'USD', 'Verified']);
 }
 
-function sendDownloadEmail(email, productName) {
-  const driveUrl = getDownloadLinkFromSheet(productName) || ('https://drive.google.com/drive/folders/' + CONFIG.DRIVE_FOLDER_ID);
-  MailApp.sendEmail(email, '[Easy to Print] Link for ' + productName, `Thanks for your purchase! Your folder: ${driveUrl}`);
+function sendDownloadEmail(payerEmail, productName) {
+  const downloadUrl = getDownloadLinkFromSheet(productName) || ('https://drive.google.com/drive/folders/' + CONFIG.DRIVE_FOLDER_ID);
+  
+  const subject = `🧵 Your Embroidery Files: ${productName} [Easy Embroidery]`;
+  
+  const htmlBody = `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e1e8ed; border-radius: 8px; overflow: hidden;">
+      <div style="background-color: #1a365d; padding: 25px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Easy Embroidery</h1>
+      </div>
+      <div style="padding: 30px; background-color: #ffffff;">
+        <h2 style="color: #2d3748; margin-top: 0;">Thank you for your purchase!</h2>
+        <p style="color: #4a5568; line-height: 1.6;">We're excited to help you start your next embroidery project. You can now download your digital design files below:</p>
+        
+        <div style="background-color: #f7fafc; padding: 20px; border-radius: 6px; margin: 25px 0; text-align: center; border: 1px dashed #cbd5e0;">
+            <p style="font-weight: bold; margin-bottom: 5px; color: #2d3748;">Download Product:</p>
+            <p style="margin-bottom: 20px; font-style: italic;">${productName}</p>
+            <a href="${downloadUrl}" style="background-color: #3182ce; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Download Files (.DST / .PES)</a>
+        </div>
+        
+        <h4 style="color: #2d3748;">How to use:</h4>
+        <ul style="color: #4a5568; padding-left: 20px;">
+          <li>Download the file to your computer.</li>
+          <li>Transfer the .DST or .PES file to your machine via USB.</li>
+          <li>For best results, use a high-quality stabilizer.</li>
+        </ul>
+        
+        <hr style="border: 0; border-top: 1px solid #edf2f7; margin: 30px 0;">
+        
+        <p style="color: #718096; font-size: 14px; text-align: center;">
+          Need help? Reply to this email or visit our <a href="https://9dpi.github.io/easy2print/" style="color: #3182ce;">Help Center</a>.
+        </p>
+      </div>
+      <div style="background-color: #edf2f7; padding: 15px; text-align: center; font-size: 12px; color: #a0aec0;">
+        © 2026 Easy Embroidery. Digital patterns for creative makers.
+      </div>
+    </div>
+  `;
+
+  MailApp.sendEmail({
+    to: payerEmail,
+    subject: subject,
+    htmlBody: htmlBody
+  });
+}
+
+/**
+ * Hàm TEST để bạn kiểm tra mẫu Email
+ * Chạy hàm này trong Google Apps Script Editor
+ */
+function testMyEmail() {
+  const testEmail = "vuquangcuong@gmail.com";
+  const testProductName = "Floral Mandala Design";
+  sendDownloadEmail(testEmail, testProductName);
+  Logger.log("Đã gửi email test tới: " + testEmail);
 }
