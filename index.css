@@ -73,9 +73,8 @@ header {
 
 .accent-text {
     color: var(--accent);
-    font-style: italic;
-    font-weight: 400;
-    font-size: 20px;
+    font-weight: 800;
+    font-size: 28px;
 }
 
 .categories-btn {
