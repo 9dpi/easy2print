@@ -276,19 +276,8 @@
         if (!productId) return;
 
         async function fetchProducts() {
-            const CACHE_KEY = 'easy2print_products';
-            const CACHE_TTL = 120000;
-            const cached = localStorage.getItem(CACHE_KEY);
-            const cacheTime = localStorage.getItem(CACHE_KEY + '_time');
-
-            if (cached && cacheTime && (Date.now() - cacheTime < CACHE_TTL)) {
-                return JSON.parse(cached);
-            }
             const res = await fetch(API_URL);
-            const data = await res.json();
-            localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-            localStorage.setItem(CACHE_KEY + '_time', Date.now());
-            return data;
+            return await res.json();
         }
 
         function formatPrice(val) {

@@ -16,12 +16,14 @@ const CONFIG = {
  * Có tích hợp CacheService để tăng tốc độ phản hồi.
  */
 function doGet(e) {
+  // Cache tạm thời bị tắt để debug/cập nhật realtime
+  /*
   const cache = CacheService.getScriptCache();
   const cachedData = cache.get("products_json");
-  
   if (cachedData != null) {
     return ContentService.createTextOutput(cachedData).setMimeType(ContentService.MimeType.JSON);
   }
+  */
 
   try {
     const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);

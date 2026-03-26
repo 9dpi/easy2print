@@ -16,21 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (secondaryGrid) secondaryGrid.innerHTML = skeletonHtml;
 
         try {
-            let products = [];
-            const cached = localStorage.getItem(CACHE_KEY);
-            const cacheTime = localStorage.getItem(CACHE_KEY + '_time');
-
-            if (cached && cacheTime && (Date.now() - cacheTime < CACHE_TTL)) {
-                products = JSON.parse(cached);
-                console.log('Loaded from local cache');
-            } else {
-                const response = await fetch(API_URL);
-                products = await response.json();
-                localStorage.setItem(CACHE_KEY, JSON.stringify(products));
-                localStorage.setItem(CACHE_KEY + '_time', Date.now());
-                console.log('Loaded from API');
-            }
-
+            const response = await fetch(API_URL);
+            const products = await response.json();
+            console.log('Fetching latest from API (Cache Disabled)');
             renderProducts(products);
         } catch (error) {
             console.error('Error loading products:', error);

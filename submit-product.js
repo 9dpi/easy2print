@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 
 // --- Configuration ---
-const DEEPSEEK_API_KEY = 'YOUR_DEEPSEEK_API_KEY'; // Nhập API Key của bạn vào đây
+const DEEPSEEK_API_KEY = 'sk-e2cfceecd3724eaf97cd27f5ebe04559'; // Nhập API Key của bạn vào đây
 const DOWNLOAD_DIR = path.join(__dirname, 'Download');
 const ASSETS_DIR = path.join(__dirname, 'assets');
 const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwBQdvEMfs43bA-tiHzKALERxhrPFIUK-IXkWOio3vLCe8QUXfyziGliwIkckFtt5mFLw/exec';
@@ -122,7 +122,7 @@ async function main() {
 
         // Tìm file ảnh/file thumb (.svg hoặc .png/jpg)
         const thumbFile = files.find(f => path.parse(f).name === baseName && VALID_EXTENSIONS.includes(path.extname(f).toLowerCase()));
-        
+
         if (!thumbFile) {
             console.log(`❌ Không tìm thấy file ảnh cho ${baseName}. Bỏ qua.`);
             continue;
@@ -135,7 +135,7 @@ async function main() {
         // Tìm file Download (Ưu tiên .dst, nếu không có thì tìm .txt chứa link)
         let downloadUrl = "https://example.com/check-link"; // Fallback
         let fileToDelete = [];
-        
+
         // 1. Kiểm tra file .dst trong thư mục
         const dstFile = files.find(f => path.parse(f).name === baseName && path.extname(f).toLowerCase() === '.dst');
         if (dstFile) {
@@ -179,7 +179,7 @@ async function main() {
             const p = path.join(DOWNLOAD_DIR, f);
             if (fs.existsSync(p)) fs.unlinkSync(p);
         });
-        
+
         console.log(`🎉 Hoàn tất sản phẩm: ${aiContent.title}`);
     }
     console.log('\n✅ TẤT CẢ SẢN PHẨM ĐÃ ĐƯỢC XỬ LÝ!');
