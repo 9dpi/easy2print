@@ -339,7 +339,7 @@ main {
     width: 100%;
     padding-top: 100%;
     /* Pure 1:1 Square */
-    background-color: #ffffff; /* Đổi sang nền trắng */
+    background-color: #EAEFF4; /* Light blue background as requested */
     border-radius: var(--card-radius);
     overflow: hidden;
     margin-bottom: 10px;
