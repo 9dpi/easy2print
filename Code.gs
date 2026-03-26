@@ -16,44 +16,45 @@ const CONFIG = {
  * Có tích hợp CacheService để tăng tốc độ phản hồi.
  */
 function doGet(e) {
+  const cache = CacheService.getScriptCache();
+  
   try {
     const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
     
-    // --- Tính năng lấy Review ngẫu nhiên ---
+    // --- Tính năng lấy Review ngẫu nhiên (Kèm Cache) ---
     if (e.parameter.action === 'getReviews') {
+      const cachedReviews = cache.get("reviews_json");
+      if (cachedReviews != null) return ContentService.createTextOutput(cachedReviews).setMimeType(ContentService.MimeType.JSON);
+
       const reviewSheet = ss.getSheetByName("Comments");
       if (!reviewSheet) return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
       
       const reviewData = reviewSheet.getDataRange().getValues();
       const reviews = [];
       
-      // Bắt đầu từ 0 vì trong ảnh mẫu không thấy header
       for (let i = 0; i < reviewData.length; i++) {
         const name = (reviewData[i][0] || "").toString().trim();
         const comment = (reviewData[i][2] || "").toString().trim();
         if (!name || !comment) continue;
         
-        // Tạo ngày ngẫu nhiên trong vòng 30 ngày qua
         const now = new Date();
         const randomDays = Math.floor(Math.random() * 30);
         const randomDate = new Date(now.getTime() - (randomDays * 24 * 60 * 60 * 1000));
         const dateStr = randomDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
-        reviews.push({
-           name: name,
-           date: dateStr,
-           text: comment,
-           initial: name.charAt(0).toUpperCase()
-        });
+        reviews.push({ name, date: dateStr, text: comment, initial: name.charAt(0).toUpperCase() });
       }
-      return ContentService.createTextOutput(JSON.stringify(reviews)).setMimeType(ContentService.MimeType.JSON);
+      const finalReviewsJson = JSON.stringify(reviews);
+      cache.put("reviews_json", finalReviewsJson, 300); // Lưu cache 5 phút
+      return ContentService.createTextOutput(finalReviewsJson).setMimeType(ContentService.MimeType.JSON);
     }
     
-    // --- Mặc định: Lấy danh sách sản phẩm ---
+    // --- Lấy danh sách sản phẩm (Kèm Cache) ---
+    const cachedProducts = cache.get("products_json");
+    if (cachedProducts != null) return ContentService.createTextOutput(cachedProducts).setMimeType(ContentService.MimeType.JSON);
+
     const sheet = ss.getSheetByName("Products");
-    if (!sheet) {
-      return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
-    }
+    if (!sheet) return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
 
     const data = sheet.getDataRange().getValues();
     const headers = data[0];
@@ -68,8 +69,9 @@ function doGet(e) {
         products.push(product);
     }
 
-    const finalJson = JSON.stringify(products);
-    return ContentService.createTextOutput(finalJson).setMimeType(ContentService.MimeType.JSON);
+    const finalProductsJson = JSON.stringify(products);
+    cache.put("products_json", finalProductsJson, 300); // Lưu cache 5 phút
+    return ContentService.createTextOutput(finalProductsJson).setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: error.message }))
                          .setMimeType(ContentService.MimeType.JSON);
