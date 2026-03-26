@@ -393,7 +393,7 @@
                 document.querySelector('.rating-number').innerText = randomRating.toFixed(1);
                 
                 // 2. Load Comments from GSheet (or Mock if not available)
-                loadMockReviews();
+                setTimeout(loadMockReviews, 100); 
             }
         } catch (e) {
             console.error('Error loading detail:', e);
@@ -401,16 +401,22 @@
 
         async function loadMockReviews() {
             try {
-                const res = await fetch(API_URL + '?action=getReviews');
+                // Ensure the URL is correctly formatted with the action parameter
+                const reviewsUrl = `${API_URL}${API_URL.includes('?') ? '&' : '?'}action=getReviews`;
+                const res = await fetch(reviewsUrl);
                 const allReviews = await res.json();
                 
-                if (!allReviews || allReviews.length === 0) return;
+                if (!allReviews || allReviews.length === 0) {
+                    console.log("No reviews found in API response");
+                    return;
+                }
 
                 // Xáo trộn và lấy 3 review ngẫu nhiên từ list 30 cái
-                const shuffled = allReviews.sort(() => 0.5 - Math.random());
+                const shuffled = [...allReviews].sort(() => 0.5 - Math.random());
                 const selectedReviews = shuffled.slice(0, 3);
 
                 const container = document.getElementById('reviews-list');
+                if (!container) return;
                 container.innerHTML = selectedReviews.map(c => `
                     <div class="review-item">
                         <div class="review-top-line">

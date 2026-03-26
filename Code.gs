@@ -27,21 +27,23 @@ function doGet(e) {
       const reviewData = reviewSheet.getDataRange().getValues();
       const reviews = [];
       
-      // Lấy 30 review từ Sheet1 (bỏ qua header nếu có, ở đây là từ dòng 1)
+      // Bắt đầu từ 0 vì trong ảnh mẫu không thấy header
       for (let i = 0; i < reviewData.length; i++) {
-        if (!reviewData[i][0]) continue;
+        const name = (reviewData[i][0] || "").toString().trim();
+        const comment = (reviewData[i][2] || "").toString().trim();
+        if (!name || !comment) continue;
         
-        // Tạo ngày ngẫu nhiên trong vòng 30 ngày qua cho sống động
+        // Tạo ngày ngẫu nhiên trong vòng 30 ngày qua
         const now = new Date();
         const randomDays = Math.floor(Math.random() * 30);
-        const randomDate = new Date(now.setDate(now.getDate() - randomDays));
+        const randomDate = new Date(now.getTime() - (randomDays * 24 * 60 * 60 * 1000));
         const dateStr = randomDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
         reviews.push({
-           name: reviewData[i][0],
+           name: name,
            date: dateStr,
-           text: reviewData[i][2],
-           initial: reviewData[i][0].charAt(0).toUpperCase()
+           text: comment,
+           initial: name.charAt(0).toUpperCase()
         });
       }
       return ContentService.createTextOutput(JSON.stringify(reviews)).setMimeType(ContentService.MimeType.JSON);
