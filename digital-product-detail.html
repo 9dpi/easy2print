@@ -228,24 +228,49 @@
             </div>
             <div class="reviews-section">
                 <h2>Reviews for this item</h2>
-                <div class="reviews-header">
-                    <div class="overall-rating">
-                        <div class="rating-number">4.9</div>
-                        <div class="stars-container" id="stars-display">
-                            ★★★★★
+                <div class="buyer-highlights">
+                    <strong>Buyer highlights, summarized by AI:</strong> 
+                    <span class="highlight-tags">Gift-worthy • Cute • Would recommend • As described • Love it • Fast shipping • Beautiful</span>
+                </div>
+
+                <div class="rating-overview-row">
+                    <div class="main-score">
+                        <div class="main-score-num">4.8</div>
+                        <div class="score-stars-col">
+                            <div class="main-score-stars">★★★★★</div>
+                            <span class="avg-text">Item average (67 reviews)</span>
                         </div>
-                        <div class="total-reviews-count">(67 reviews)</div>
                     </div>
-                    <div class="rating-breakdown">
-                        <div class="rating-row"><span>5 stars</span><div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 90%"></div></div><span>90%</span></div>
-                        <div class="rating-row"><span>4 stars</span><div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 8%"></div></div><span>8%</span></div>
-                        <div class="rating-row"><span>3 stars</span><div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 2%"></div></div><span>2%</span></div>
+
+                    <div class="circle-score-badges">
+                        <div class="score-badge">
+                            <div class="score-circle">4.8</div>
+                            <span>Item quality</span>
+                        </div>
+                        <div class="score-badge">
+                            <div class="score-circle">5.0</div>
+                            <span>Shipping</span>
+                        </div>
+                        <div class="score-badge">
+                            <div class="score-circle">4.9</div>
+                            <span>Customer service</span>
+                        </div>
                     </div>
                 </div>
 
-                <div id="reviews-list">
-                    <!-- Reviews will be loaded here -->
+                <div class="review-filters">
+                    <button class="filter-btn">Suggested ▾</button>
+                    <button class="filter-btn">Description accuracy (11)</button>
+                    <button class="filter-btn">Quality (12)</button>
+                    <button class="filter-btn">Seller service (6)</button>
+                    <button class="filter-btn">Shipping & Packaging (7)</button>
                 </div>
+
+                <div id="reviews-list">
+                    <!-- Dynamic reviews will be injected here -->
+                </div>
+
+                <button class="view-all-reviews-btn">View all reviews for this item</button>
 
                 <div class="submit-review-card">
                     <h3>Write a Review</h3>
@@ -391,14 +416,21 @@
                 const container = document.getElementById('reviews-list');
                 container.innerHTML = selectedReviews.map(c => `
                     <div class="review-item">
-                        <div class="review-user-info">
-                            <div class="user-avatar">${c.initial}</div>
-                            <div class="user-details">
-                                <span class="user-name">${c.name}</span>
+                        <div class="review-top-line">
+                            <div class="stars-row">
+                                <span class="stars-icons">★★★★★</span>
+                                <span class="stars-num">5</span>
+                                <span class="this-item-label">This item</span>
+                            </div>
+                            <div class="reviewer-info">
+                                <div class="user-avatar" style="width:24px; height:24px; font-size:10px; display:inline-flex;">${c.initial}</div>
+                                <strong>${c.name}</strong>
                                 <span class="review-date">${c.date}</span>
                             </div>
                         </div>
-                        <p class="review-comment">${c.text}</p>
+                        <div class="review-text-content">
+                            ${c.text}
+                        </div>
                     </div>
                 `).join('');
             } catch (e) {
