@@ -39,14 +39,15 @@ async function generateAIContent(fileName) {
 
     console.log(`🤖 AI đang phân tích và tạo nội dung cho: ${fileName}...`);
     try {
-        const prompt = `Bạn là chuyên gia marketing cho cửa hàng thêu "Easy Embroidery".
-Tên file gốc: "${fileName}"
-Hãy tạo ra thông tin sản phẩm thêu máy (embroidery design) chuẩn SEO 2026:
-1. Title: Tên sản phẩm hấp dẫn, chứa từ khóa (vd: Floral, DST, PES, Machine Embroidery).
-2. Description: Mô tả People-First hữu ích, nhắc đến việc đã test trên máy gia đình, kích thước chuẩn.
-3. Tags: 5-8 hashtag phù hợp nhất.
+        const prompt = `You are an expert marketing specialist for the store "Easy Embroidery".
+Original File Name: "${fileName}"
+Task: Generate premium Machine Embroidery Design (DST/PES) product details in ENGLISH that are SEO-optimized for 2026:
+1. Title: Creative and keyword-rich (include terms like Floral, Machine Embroidery, DST, PES, Digital Download).
+2. Description: Detailed, high-quality, people-first description. Mention it was tested on home machines for beginners.
+3. Tags: 5-8 relevant hashtags like #MachineEmbroidery, #EmbroideryDesigns, etc.
 
-Trả về định dạng JSON: {"title": "...", "description": "...", "tags": ["tag1", "tag2"]}`;
+IMPORTANT: All content (Title, Description, Tags) MUST be in ENGLISH.
+Return as JSON: {"title": "...", "description": "...", "tags": ["tag1", "tag2"]}`;
 
         const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
             method: 'POST',
