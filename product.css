@@ -504,16 +504,24 @@
 .reviewer-info {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     font-size: 13px;
     color: #222;
 }
 
-.reviewer-avatar {
-    width: 24px;
-    height: 24px;
+.user-avatar {
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
-    object-fit: cover;
+    background: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 11px;
+    color: #222;
+    border: 1px solid #e1e1e1;
+    line-height: 1;
 }
 
 .review-text-content {
