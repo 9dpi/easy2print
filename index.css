@@ -339,7 +339,7 @@ main {
     width: 100%;
     padding-top: 100%;
     /* Pure 1:1 Square */
-    background-color: #f4f4f4;
+    background-color: #ffffff; /* Đổi sang nền trắng */
     border-radius: var(--card-radius);
     overflow: hidden;
     margin-bottom: 10px;
@@ -364,16 +364,17 @@ main {
 
 .product-image-container img {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    top: 50%;
+    left: 50%;
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    transform: translate(-50%, -50%);
     transition: transform 0.3s;
 }
 
 .product-card:hover .product-image-container img {
-    transform: scale(1.05);
+    transform: translate(-50%, -50%) scale(1.1);
 }
 
 .favorite-icon {
