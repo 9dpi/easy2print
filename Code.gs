@@ -18,6 +18,36 @@ const CONFIG = {
 function doGet(e) {
   try {
     const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+    
+    // --- Tính năng lấy Review ngẫu nhiên ---
+    if (e.parameter.action === 'getReviews') {
+      const reviewSheet = ss.getSheetByName("Comments");
+      if (!reviewSheet) return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
+      
+      const reviewData = reviewSheet.getDataRange().getValues();
+      const reviews = [];
+      
+      // Lấy 30 review từ Sheet1 (bỏ qua header nếu có, ở đây là từ dòng 1)
+      for (let i = 0; i < reviewData.length; i++) {
+        if (!reviewData[i][0]) continue;
+        
+        // Tạo ngày ngẫu nhiên trong vòng 30 ngày qua cho sống động
+        const now = new Date();
+        const randomDays = Math.floor(Math.random() * 30);
+        const randomDate = new Date(now.setDate(now.getDate() - randomDays));
+        const dateStr = randomDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+        reviews.push({
+           name: reviewData[i][0],
+           date: dateStr,
+           text: reviewData[i][2],
+           initial: reviewData[i][0].charAt(0).toUpperCase()
+        });
+      }
+      return ContentService.createTextOutput(JSON.stringify(reviews)).setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    // --- Mặc định: Lấy danh sách sản phẩm ---
     const sheet = ss.getSheetByName("Products");
     if (!sheet) {
       return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);

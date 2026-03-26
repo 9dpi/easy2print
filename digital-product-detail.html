@@ -377,26 +377,33 @@
             console.error('Error loading detail:', e);
         }
 
-        function loadMockReviews() {
-            const comments = [
-                { name: "Geri", date: "Mar 25, 2026", text: "Absolutely beautiful. I would recommend.", initial: "G" },
-                { name: "Desiree", date: "Mar 25, 2026", text: "Great quality and a perfect gift! Wonderful customer service!", initial: "D" },
-                { name: "Ashley", date: "Mar 24, 2026", text: "We love it! Its the perfect gift! Thank you!", initial: "A" }
-            ];
+        async function loadMockReviews() {
+            try {
+                const res = await fetch(API_URL + '?action=getReviews');
+                const allReviews = await res.json();
+                
+                if (!allReviews || allReviews.length === 0) return;
 
-            const container = document.getElementById('reviews-list');
-            container.innerHTML = comments.map(c => `
-                <div class="review-item">
-                    <div class="review-user-info">
-                        <div class="user-avatar">${c.initial}</div>
-                        <div class="user-details">
-                            <span class="user-name">${c.name}</span>
-                            <span class="review-date">${c.date}</span>
+                // Xáo trộn và lấy 3 review ngẫu nhiên từ list 30 cái
+                const shuffled = allReviews.sort(() => 0.5 - Math.random());
+                const selectedReviews = shuffled.slice(0, 3);
+
+                const container = document.getElementById('reviews-list');
+                container.innerHTML = selectedReviews.map(c => `
+                    <div class="review-item">
+                        <div class="review-user-info">
+                            <div class="user-avatar">${c.initial}</div>
+                            <div class="user-details">
+                                <span class="user-name">${c.name}</span>
+                                <span class="review-date">${c.date}</span>
+                            </div>
                         </div>
+                        <p class="review-comment">${c.text}</p>
                     </div>
-                    <p class="review-comment">${c.text}</p>
-                </div>
-            `).join('');
+                `).join('');
+            } catch (e) {
+                console.error("Error loading reviews:", e);
+            }
         }
 
         // --- Submit Review Form Logic ---
