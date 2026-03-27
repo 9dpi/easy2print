@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const container = document.createElement('div');
     container.id = 'embroidery-chatbot-container';
     container.innerHTML = `
+        <div class="greeting-badge" id="greeting-badge">Need custom design help? 👋</div>
         <div class="chat-bubble" id="chat-bubble">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
@@ -33,13 +34,24 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.appendChild(container);
 
     const bubble = document.getElementById('chat-bubble');
+    const badge = document.getElementById('greeting-badge');
     const window = document.getElementById('chat-window');
     const closeBtn = document.getElementById('close-chat');
     const messages = document.getElementById('chat-messages');
     const optionsArea = document.getElementById('initial-options');
 
-    // 2. Event Handlers
-    bubble.onclick = () => window.classList.toggle('active');
+    // 2. Proactive Logic
+    setTimeout(() => {
+        if (!window.classList.contains('active')) {
+            badge.classList.add('show');
+        }
+    }, 2000);
+
+    // 3. Event Handlers
+    bubble.onclick = () => {
+        window.classList.toggle('active');
+        badge.classList.remove('show');
+    };
     closeBtn.onclick = () => window.classList.remove('active');
 
     optionsArea.onclick = (e) => {
