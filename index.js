@@ -2,8 +2,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Phase 2: Dynamic Product Loading ---
     const API_URL = 'https://script.google.com/macros/s/AKfycbwBQdvEMfs43bA-tiHzKALERxhrPFIUK-IXkWOio3vLCe8QUXfyziGliwIkckFtt5mFLw/exec';
-    const CACHE_KEY = 'easy_embroidery_products';
-    const CACHE_TTL = 120000; // 2 minutes
+    const PREF_KEY = 'easy_user_preference';
+
+    function formatPrice(val) {
+        if (!val) return '';
+        const num = parseFloat(String(val).replace(/[^0-9.]/g, ''));
+        if (isNaN(num)) return val;
+        return '$' + num.toFixed(2);
+    }
 
     async function loadProducts() {
         const grid = document.getElementById('product-grid');
@@ -26,13 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function formatPrice(val) {
-        if (!val) return '';
-        const num = parseFloat(String(val).replace(/[^0-9.]/g, ''));
-        if (isNaN(num)) return val;
-        return '$' + num.toFixed(2);
-    }
-
     function renderProducts(products) {
         const grid = document.getElementById('product-grid');
         const secondaryGrid = document.getElementById('secondary-product-grid');
@@ -44,13 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- NEW: Generate Trending Categories (Hashtags) ---
         generateTrendingCategories(products);
 
-        // Clone and Shuffle
+        // Clone and Personalized Shuffle
         let masterList = [...products];
         const topTag = window.EasyIntelligence ? window.EasyIntelligence.getTopInterest() : null;
         
         if (topTag) {
             console.log("Personalizing view for interest:", topTag);
-            // Move items with matching tag to the front
             masterList.sort((a, b) => {
                 const aHas = a.tags && a.tags.toLowerCase().includes(topTag.toLowerCase());
                 const bHas = b.tags && b.tags.toLowerCase().includes(topTag.toLowerCase());
@@ -60,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const suggested = masterList.slice(0, 5);
         const others = masterList.slice(5);
-
         const currentFavs = window.EasyIntelligence ? window.EasyIntelligence.getFavorites() : [];
 
         const createCard = (product) => {
@@ -69,12 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const hashtagsHtml = tags.map(t => `<span class="hashtag">#${t}</span>`).join('');
             const priceFormatted = formatPrice(product.price);
             const origFormatted = product.original_price ? formatPrice(product.original_price) : '';
+            const isFav = currentFavs.includes(String(product.id));
             
             // Get Social Proof Nudge
             const nudgeHtml = typeof window.getRandomNudge === 'function' ? `<div class="social-nudge-badge">${window.getRandomNudge()}</div>` : '';
             
-            const isFav = currentFavs.includes(String(product.id));
-
             return `
                 <div class="product-card" data-tags="${tagsDataAttr}">
                     <div class="product-image-container">
@@ -94,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         };
 
-        // Render grids...
         suggested.forEach(p => grid.innerHTML += createCard(p));
         if (secondaryGrid) {
             others.forEach(p => secondaryGrid.innerHTML += createCard(p));
@@ -121,7 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Lấy 6 tag nhiều nhất
         const trendingTags = Object.entries(tagCounts)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 6)
@@ -130,29 +124,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const mainNav = document.getElementById('main-nav');
         const mobileNav = document.getElementById('mobile-nav');
 
-        // Render Main Nav
         let navHtml = `<a href="#" class="active" onclick="filterCategory(event, 'all')">All Categories</a>`;
         trendingTags.forEach(tag => {
             navHtml += `<a href="#${tag}" onclick="filterCategory(event, '${tag}')">${tag}</a>`;
         });
         if (mainNav) mainNav.innerHTML = navHtml;
-
-        // Render Mobile Dropdown
-        let mobileHtml = `<a href="#" onclick="filterCategory(event, 'all')">🌟 All Categories</a>`;
-        trendingTags.forEach(tag => {
-            mobileHtml += `<a href="#${tag}" onclick="filterCategory(event, '${tag}')">📂 ${tag}</a>`;
-        });
-        if (mobileNav) mobileNav.innerHTML = mobileHtml;
+        if (mobileNav) {
+            let mobileHtml = `<a href="#" onclick="filterCategory(event, 'all')">🌟 All Categories</a>`;
+            trendingTags.forEach(tag => {
+                mobileHtml += `<a href="#${tag}" onclick="filterCategory(event, '${tag}')">${tag}</a>`;
+            });
+            mobileNav.innerHTML = mobileHtml;
+        }
     }
 
-    const PREF_KEY = 'easy_user_preference';
-
-    async function loadProducts() {
-        // ... (existing code remains outside this replace block)
-        // Ensure generateTrendingCategories is called inside loadProducts in reality
-    }
-
-    // --- NEW: Personalized Category Circles Logic ---
+    // --- Personalized Category Circles Logic ---
     const allCategories = [
         { id: 'men', label: 'Men\'s Style', icon: 'assets/men_tshirt.png', tag: 'men tshirt', gender: 'men' },
         { id: 'women', label: 'Floral & Decor', icon: 'assets/women_accessories.png', tag: 'floral', gender: 'women' },
@@ -188,18 +174,13 @@ document.addEventListener('DOMContentLoaded', () => {
     window.trackPreference = function(gender) {
         if (gender !== 'both') {
             localStorage.setItem(PREF_KEY, gender);
-            console.log(`User preference updated to: ${gender}`);
+            renderPersonalizedCircles();
         }
     };
-
-    // Initial Render
-    renderPersonalizedCircles();
 
     window.filterCategory = function(e, tag) {
         if (e) e.preventDefault();
         const cards = document.querySelectorAll('.product-card');
-        
-        // Update Active State in Nav
         document.querySelectorAll('#main-nav a').forEach(a => a.classList.remove('active'));
         if (e && e.target) e.target.classList.add('active');
 
@@ -212,44 +193,41 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Smooth scroll to results
         const firstGrid = document.querySelector('.product-grid');
         if (firstGrid) firstGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
+    // --- Execution ---
+    renderPersonalizedCircles();
     loadProducts();
 
     // --- Original Interactions ---
     const searchForm = document.getElementById('search_form');
-    const searchInput = searchForm.querySelector('input');
+    const searchInput = searchForm ? searchForm.querySelector('input') : null;
 
-    searchForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const query = searchInput.value.trim().toLowerCase();
-        const cards = document.querySelectorAll('.product-card');
-        const grid = document.querySelector('.product-grid');
-        
-        if (query) {
-            cards.forEach(card => {
-                const title = card.querySelector('h3').innerText.toLowerCase();
-                if (title.includes(query)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-            if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
-            cards.forEach(card => card.style.display = 'block');
-        }
-    });
+    if (searchForm) {
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const query = searchInput.value.trim().toLowerCase();
+            const cards = document.querySelectorAll('.product-card');
+            const grid = document.querySelector('.product-grid');
+            
+            if (query) {
+                cards.forEach(card => {
+                    const title = card.querySelector('h3').innerText.toLowerCase();
+                    card.style.display = title.includes(query) ? 'block' : 'none';
+                });
+                if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                cards.forEach(card => card.style.display = 'block');
+            }
+        });
+    }
 
     const header = document.querySelector('header');
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-        } else {
-            header.style.boxShadow = 'none';
+        if (header) {
+            header.style.boxShadow = window.scrollY > 50 ? '0 2px 10px rgba(0,0,0,0.1)' : 'none';
         }
     });
 
@@ -258,9 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         heroBtn.addEventListener('click', (e) => {
             e.preventDefault();
             const target = document.querySelector('#suggested-section');
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     }
 
@@ -277,22 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-window.filterCategory = function(e, category) {
-    if (e) e.preventDefault();
-    const cards = document.querySelectorAll('.product-card');
-    cards.forEach(card => {
-        const tags = card.getAttribute('data-tags');
-        if (!tags) return;
-        if (category === 'all' || tags.includes(category)) {
-            card.style.display = 'block';
-        } else {
-            card.style.display = 'none';
-        }
-    });
-    const grid = document.querySelector('.product-grid');
-    if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
-
+// Modal Logic
 window.openModal = function(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
@@ -318,10 +279,9 @@ window.closeModalDirect = function(modalId) {
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-        const activeModals = document.querySelectorAll('.universal-modal[style*="display: flex"]');
-        activeModals.forEach(modal => {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+        document.querySelectorAll('.universal-modal').forEach(m => {
+            m.style.display = 'none';
         });
+        document.body.style.overflow = 'auto';
     }
 });
