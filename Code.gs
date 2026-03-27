@@ -86,6 +86,33 @@ function doPost(e) {
       return handleAddProduct(data);
     }
 
+    if (data.action === "customRequest") {
+      const ss = SpreadsheetApp.openById(CONFIG.SHEET_ID);
+      const email = data.email;
+      const size = data.size || "Standard";
+      const desc = data.description || "No description provided.";
+
+      // 1. Gửi Email thông báo cho Admin
+      const emailBody = `💡 CÓ YÊU CẦU THÊU THEO YÊU CẦU MỚI!\n\n` +
+                        `- Email khách: ${email}\n` +
+                        `- Kích thước muốn: ${size}\n` +
+                        `- Mô tả: ${desc}\n\n` +
+                        `Vui lòng phản hồi khách qua email để báo giá và nhận file ảnh!`;
+      
+      MailApp.sendEmail("vuquangcuong@gmail.com", "🌟 [Easy Embroidery] New Custom Design Request!", emailBody);
+
+      // 2. Lưu vào trang GSheet "CustomRequests"
+      let customSheet = ss.getSheetByName("CustomRequests");
+      if (!customSheet) {
+          customSheet = ss.insertSheet("CustomRequests");
+          customSheet.appendRow(["Timestamp", "Email", "Dimensions", "Description", "Status"]);
+      }
+      customSheet.appendRow([new Date(), email, size, desc, "Pending"]);
+
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'Request received!' }))
+                           .setMimeType(ContentService.MimeType.JSON);
+    }
+
     if (data.action === "submitReview") {
       const adminEmail = "vuquangcuong@gmail.com";
       const subject = `⭐ New Review for ${data.product}`;
