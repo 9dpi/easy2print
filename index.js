@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div id="fav-items-list" style="flex-grow:1; overflow-y:auto; padding:25px; background:#fafafa;"></div>
                     <div style="padding:25px; border-top:1px solid #f0f0f0; background:#fff;">
-                        <button onclick="window.closeFavModal()" class="hero-btn" style="width:100%; margin:0; text-align:center; padding:15px; border-radius:15px; background:#f5f5f5; color:#333;">Continue Shopping</button>
+                        <button onclick="window.closeFavModal()" class="hero-btn" style="width:100%; margin:0; text-align:center; padding:18px; border-radius:15px; background:#1a365d; color:#fff; font-weight:600; border:none; cursor:pointer; font-size:16px; box-shadow:0 8px 20px rgba(26, 54, 93, 0.15);">Explore More Designs</button>
                     </div>
                 </div>
             `;
