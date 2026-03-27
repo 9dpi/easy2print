@@ -463,6 +463,8 @@
             grid.innerHTML = itemsToShow.map(p => {
                 const isFav = currentFavs.includes(String(p.id));
                 const priceFormatted = formatPrice(p.price);
+                const tagsList = p.tags ? p.tags.split(',').map(t => t.trim()) : [];
+                const hashtagsHtml = tagsList.map(t => `<span class="hashtag" onclick="event.stopPropagation(); window.location.href='index.html#${t}'">#${t}</span>`).join('');
                 const nudgeHtml = typeof window.getRandomNudge === 'function' ? `<div class="social-nudge-badge" style="font-size:9px; padding:2px 6px;">${window.getRandomNudge()}</div>` : '';
                 
                 return `
@@ -477,6 +479,7 @@
                         <div class="product-info" style="padding:12px;">
                             <h3 style="font-size:14px; margin-bottom:5px; cursor:pointer;" onclick="window.location.href='digital-product-detail.html?id=${p.id}'">${p.title}</h3>
                             <div class="product-price" style="font-size:14px; font-weight:700;">${priceFormatted}</div>
+                            <div class="hashtags" style="margin-top:5px;">${hashtagsHtml}</div>
                         </div>
                     </div>
                 `;

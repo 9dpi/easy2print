@@ -198,7 +198,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Execution ---
     renderPersonalizedCircles();
-    loadProducts();
+    loadProducts().then(() => {
+        // Handle URL Hash for hashtag filtering from other pages
+        const hash = window.location.hash.replace('#', '');
+        if (hash) {
+            setTimeout(() => {
+                const decoded = decodeURIComponent(hash);
+                console.log("Deep linking to category:", decoded);
+                window.filterCategory(null, decoded);
+            }, 500);
+        }
+    });
 
     // --- Original Interactions ---
     const searchForm = document.getElementById('search_form');
