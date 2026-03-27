@@ -106,7 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Shared Cart Modal Logic for Index ---
     window.openCartModal = function() {
-        // Reuse logic or implement here
+        // Hide chatbot to prevent overlap
+        const chatbot = document.querySelector('#chatbot-icon') || document.querySelector('.chatbot-container');
+        if (chatbot) chatbot.style.display = 'none';
+
         let modal = document.getElementById('cart-modal');
         if (!modal) {
             modal = document.createElement('div');
@@ -139,6 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.closeCartModal = function() {
         const modal = document.getElementById('cart-modal');
         if (modal) modal.style.display = 'none';
+        
+        // Show chatbot back
+        const chatbot = document.querySelector('#chatbot-icon') || document.querySelector('.chatbot-container');
+        if (chatbot) chatbot.style.display = 'flex';
     };
 
     function updateCartModalUI() {

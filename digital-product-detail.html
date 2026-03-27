@@ -501,6 +501,10 @@
 
         // --- Cart Modal Logic ---
         window.openCartModal = function() {
+            // Hide chatbot to prevent overlap
+            const chatbot = document.querySelector('#chatbot-icon') || document.querySelector('.chatbot-container');
+            if (chatbot) chatbot.style.display = 'none';
+
             let modal = document.getElementById('cart-modal');
             if (!modal) {
                 modal = document.createElement('div');
@@ -535,6 +539,10 @@
         window.closeCartModal = function() {
             const modal = document.getElementById('cart-modal');
             if (modal) modal.style.display = 'none';
+
+            // Show chatbot back
+            const chatbot = document.querySelector('#chatbot-icon') || document.querySelector('.chatbot-container');
+            if (chatbot) chatbot.style.display = 'flex';
         };
 
         function updateCartModalUI() {
