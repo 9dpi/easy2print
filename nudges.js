@@ -1,11 +1,11 @@
 /* 🛒 SOCIAL PROOF NUDGES - TRANSFORMATION LIBRARY */
 const NUDGE_LIBRARY = [
-    { id: 1, text: "🔥 {N} people bought this today", icon: "🛒" },
-    { id: 2, text: "⭐ Highly rated: {N} reviews this month", icon: "✨" },
-    { id: 3, text: "👁️ {N} people are viewing this now", icon: "🔥" },
-    { id: 4, text: "💎 Best seller in this category", icon: "🏆" },
-    { id: 5, text: "✨ 98.7% Satisfaction rate", icon: "✅" },
-    { id: 6, text: "{N} people saved this to favorites", icon: "❤️" }
+    { id: 1, text: "🔥 {N} sold today", icon: "" },
+    { id: 2, text: "⭐ {N} happy reviews", icon: "" },
+    { id: 3, text: "👁️ {N} viewing now", icon: "" },
+    { id: 4, text: "🏆 Best seller", icon: "" },
+    { id: 5, text: "✅ Satisfaction: 99%", icon: "" },
+    { id: 6, text: "❤️ {N} favorites", icon: "" }
 ];
 
 function getRandomNudge() {
