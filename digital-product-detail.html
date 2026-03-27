@@ -290,6 +290,16 @@
         </div>
     </div>
 </main>
+    
+    <!-- Related Products -->
+    <section class="related-products" id="suggested-section" style="padding: 40px 5%; background: #fff; border-top: 1px solid #eee;">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h2 style="font-size: 24px; color: #1a1a1a;">You might also like...</h2>
+        </div>
+        <div class="product-grid" id="related-grid">
+            <!-- Related products will be injected here -->
+        </div>
+    </section>
 
 <!-- Success Modal -->
 <div id="success-modal" class="modal">
@@ -424,10 +434,63 @@
                 if (detailNudge && typeof window.getRandomNudge === 'function') {
                     detailNudge.innerHTML = `<span class="social-nudge-badge" style="position:relative; top:0; left:0; display:inline-flex;">${window.getRandomNudge()}</span>`;
                 }
+
+                // 5. Render Related Products
+                renderRelatedProducts(products, productId);
             }
         } catch (e) {
             console.error('Error loading detail:', e);
         }
+
+        function renderRelatedProducts(allProducts, currentId) {
+            const grid = document.getElementById('related-grid');
+            if (!grid) return;
+
+            const topTag = window.EasyIntelligence ? window.EasyIntelligence.getTopInterest() : null;
+            let list = [...allProducts].filter(p => String(p.id) !== String(currentId));
+
+            if (topTag) {
+                list.sort((a, b) => {
+                    const aHas = a.tags && a.tags.toLowerCase().includes(topTag.toLowerCase());
+                    const bHas = b.tags && b.tags.toLowerCase().includes(topTag.toLowerCase());
+                    return (aHas === bHas) ? 0 : aHas ? -1 : 1;
+                });
+            }
+
+            const itemsToShow = list.slice(0, 4);
+            const currentFavs = window.EasyIntelligence ? window.EasyIntelligence.getFavorites() : [];
+
+            grid.innerHTML = itemsToShow.map(p => {
+                const isFav = currentFavs.includes(String(p.id));
+                const priceFormatted = formatPrice(p.price);
+                const nudgeHtml = typeof window.getRandomNudge === 'function' ? `<div class="social-nudge-badge" style="font-size:9px; padding:2px 6px;">${window.getRandomNudge()}</div>` : '';
+                
+                return `
+                    <div class="product-card">
+                        <div class="product-image-container" onclick="window.location.href='digital-product-detail.html?id=${p.id}'">
+                            ${nudgeHtml}
+                            <img src="${p.image_url || p.image_path}" alt="${p.title}">
+                            <div class="favorite-icon ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); handleFavClick(this, '${p.id}')">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="product-info" style="padding:12px;">
+                            <h3 style="font-size:14px; margin-bottom:5px; cursor:pointer;" onclick="window.location.href='digital-product-detail.html?id=${p.id}'">${p.title}</h3>
+                            <div class="product-price" style="font-size:14px; font-weight:700;">${priceFormatted}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.handleFavClick = function(el, id) {
+            if (window.EasyIntelligence) {
+                const isNowFav = window.EasyIntelligence.toggleFavorite(id);
+                el.classList.toggle('active', isNowFav);
+                const svg = el.querySelector('svg');
+                svg.setAttribute('fill', isNowFav ? 'currentColor' : 'none');
+            }
+        };
 
         // --- Load Reviews Independently ---
         loadMockReviews();
