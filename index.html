@@ -22,14 +22,8 @@
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 <span>Categories</span>
             </button>
-            <div class="dropdown-content">
+            <div class="dropdown-content" id="mobile-nav">
                 <a href="#" onclick="filterCategory(event, 'all')">🌟 All Categories</a>
-                <a href="#svg" onclick="filterCategory(event, 'svg')">🎨 SVG Files</a>
-                <a href="#art" onclick="filterCategory(event, 'art')">🖼️ Digital Art Prints</a>
-                <a href="#bundle" onclick="filterCategory(event, 'bundle')">🎒 Graphic Bundles</a>
-                <a href="#printable" onclick="filterCategory(event, 'printable')">🖨️ Printables</a>
-                <a href="#tshirt" onclick="filterCategory(event, 'tshirt')">👕 T-Shirt Design</a>
-                <a href="#wallart" onclick="filterCategory(event, 'wallart')">🏡 WallArt</a>
             </div>
         </div>
 
@@ -50,14 +44,9 @@
         </div>
     </div>
 
-    <nav class="nav-links">
-        <a href="#" onclick="filterCategory(event, 'all')">All Categories</a>
-        <a href="#svg" onclick="filterCategory(event, 'svg')">SVG Files</a>
-        <a href="#art" onclick="filterCategory(event, 'art')">Digital Art Prints</a>
-        <a href="#bundle" onclick="filterCategory(event, 'bundle')">Graphic Bundles</a>
-        <a href="#printable" onclick="filterCategory(event, 'printable')">Printables</a>
-        <a href="#tshirt" onclick="filterCategory(event, 'tshirt')">T-Shirt Design</a>
-        <a href="#wallart" onclick="filterCategory(event, 'wallart')">WallArt</a>
+    <nav class="nav-links" id="main-nav">
+        <!-- Dynamic categories will be injected here -->
+        <a href="#" class="active" onclick="filterCategory(event, 'all')">All Categories</a>
     </nav>
 </header>
 

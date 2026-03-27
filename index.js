@@ -41,6 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
         grid.innerHTML = '';
         if (secondaryGrid) secondaryGrid.innerHTML = '';
 
+        // --- NEW: Generate Trending Categories (Hashtags) ---
+        generateTrendingCategories(products);
+
         // Clone and Shuffle for "Suggested"
         const shuffled = [...products].sort(() => 0.5 - Math.random());
         const suggested = shuffled.slice(0, 5);
@@ -79,6 +82,63 @@ document.addEventListener('DOMContentLoaded', () => {
             others.forEach(p => secondaryGrid.innerHTML += createCard(p));
         }
     }
+
+    function generateTrendingCategories(products) {
+        const tagCounts = {};
+        products.forEach(p => {
+            if (p.tags) {
+                p.tags.split(',').forEach(tag => {
+                    const t = tag.trim();
+                    if (t) tagCounts[t] = (tagCounts[t] || 0) + 1;
+                });
+            }
+        });
+
+        // Lấy 6 tag nhiều nhất
+        const trendingTags = Object.entries(tagCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 6)
+            .map(entry => entry[0]);
+
+        const mainNav = document.getElementById('main-nav');
+        const mobileNav = document.getElementById('mobile-nav');
+
+        // Render Main Nav
+        let navHtml = `<a href="#" class="active" onclick="filterCategory(event, 'all')">All Categories</a>`;
+        trendingTags.forEach(tag => {
+            navHtml += `<a href="#${tag}" onclick="filterCategory(event, '${tag}')">${tag}</a>`;
+        });
+        if (mainNav) mainNav.innerHTML = navHtml;
+
+        // Render Mobile Dropdown
+        let mobileHtml = `<a href="#" onclick="filterCategory(event, 'all')">🌟 All Categories</a>`;
+        trendingTags.forEach(tag => {
+            mobileHtml += `<a href="#${tag}" onclick="filterCategory(event, '${tag}')">📂 ${tag}</a>`;
+        });
+        if (mobileNav) mobileNav.innerHTML = mobileHtml;
+    }
+
+    window.filterCategory = function(e, tag) {
+        if (e) e.preventDefault();
+        const cards = document.querySelectorAll('.product-card');
+        
+        // Update Active State in Nav
+        document.querySelectorAll('#main-nav a').forEach(a => a.classList.remove('active'));
+        if (e && e.target) e.target.classList.add('active');
+
+        cards.forEach(card => {
+            const productTags = card.dataset.tags || '';
+            if (tag === 'all' || productTags.toLowerCase().includes(tag.toLowerCase())) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Smooth scroll to results
+        const firstGrid = document.querySelector('.product-grid');
+        if (firstGrid) firstGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
 
     loadProducts();
 
