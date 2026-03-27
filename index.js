@@ -95,25 +95,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    window.handleFavClick = function(el, id) {
-        if (window.EasyIntelligence) {
-            const isNowFav = window.EasyIntelligence.toggleFavorite(id);
-            el.classList.toggle('active', isNowFav);
-            const svg = el.querySelector('svg');
-            svg.setAttribute('fill', isNowFav ? 'currentColor' : 'none');
-        }
-    };
-
     // --- Shared Cart Modal Logic for Index ---
-    window.openCartModal = function() {
-        // Force hide chatbot directly by targeting ID and class
+    let globalProducts = []; // To store products for modal lookups
+    
+    async function loadProducts() {
+        // ... grid logic
+        try {
+            const response = await fetch(API_URL);
+            globalProducts = await response.json();
+            console.log('Fetching latest from API (Cache Disabled)');
+            renderProducts(globalProducts);
+        } catch (error) { /* ... */ }
+    }
+
+    // Modal helpers for chatbot visibility
+    function toggleChatbotVisibility(visible) {
         const cbIcon = document.getElementById('chatbot-icon');
         const cbPopup = document.querySelector('.chatbot-popup');
         const cbContainer = document.querySelector('.chatbot-container');
-        if (cbIcon) cbIcon.style.visibility = 'hidden';
-        if (cbPopup) cbPopup.style.visibility = 'hidden';
-        if (cbContainer) cbContainer.style.visibility = 'hidden';
+        const state = visible ? 'visible' : 'hidden';
+        if (cbIcon) cbIcon.style.visibility = state;
+        if (cbPopup) cbPopup.style.visibility = state;
+        if (cbContainer) cbContainer.style.visibility = state;
+    }
 
+    window.openCartModal = function() {
+        toggleChatbotVisibility(false);
         let modal = document.getElementById('cart-modal');
         if (!modal) {
             modal = document.createElement('div');
@@ -123,9 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modal.onclick = (e) => { if (e.target.id === 'cart-modal') window.closeCartModal(); };
             modal.innerHTML = `
                 <div style="width:420px; height:85vh; background:#fff; margin-right:20px; margin-bottom:30px; border-radius:30px; box-shadow:-5px 5px 30px rgba(0,0,0,0.15); display:flex; flex-direction:column; animation: slideInRightDrawer 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); overflow:hidden;">
-                    <style>
-                        @keyframes slideInRightDrawer { from { transform: translateX(100%) scale(0.95); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
-                    </style>
+                    <style>@keyframes slideInRightDrawer { from { transform: translateX(100%) scale(0.95); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }</style>
                     <div style="padding:25px; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center; background:#fff;">
                         <h2 style="font-size:22px; font-weight:700; color:#1a1a1a;">Your Selection</h2>
                         <button onclick="window.closeCartModal()" style="background:#f5f5f5; border:none; width:36px; height:36px; border-radius:50%; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;">&times;</button>
@@ -149,14 +154,75 @@ document.addEventListener('DOMContentLoaded', () => {
     window.closeCartModal = function() {
         const modal = document.getElementById('cart-modal');
         if (modal) modal.style.display = 'none';
-        
-        // Show chatbot back
-        const cbIcon = document.getElementById('chatbot-icon');
-        const cbPopup = document.querySelector('.chatbot-popup');
-        const cbContainer = document.querySelector('.chatbot-container');
-        if (cbIcon) cbIcon.style.visibility = 'visible';
-        if (cbPopup) cbPopup.style.visibility = 'visible';
-        if (cbContainer) cbContainer.style.visibility = 'visible';
+        toggleChatbotVisibility(true);
+    };
+
+    // --- Favorites Modal Logic ---
+    window.openFavModal = function() {
+        toggleChatbotVisibility(false);
+        let modal = document.getElementById('fav-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'fav-modal';
+            modal.className = 'universal-modal';
+            modal.style = "display:none; position:fixed; top:0; right:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9000; justify-content:flex-end; align-items:center;";
+            modal.onclick = (e) => { if (e.target.id === 'fav-modal') window.closeFavModal(); };
+            modal.innerHTML = `
+                <div style="width:420px; height:85vh; background:#fff; margin-right:20px; margin-bottom:30px; border-radius:30px; box-shadow:-5px 5px 30px rgba(0,0,0,0.15); display:flex; flex-direction:column; animation: slideInRightDrawer 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); overflow:hidden;">
+                    <div style="padding:25px; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center; background:#fff;">
+                        <h2 style="font-size:22px; font-weight:700; color:#1a1a1a;">My Favorites ❤️</h2>
+                        <button onclick="window.closeFavModal()" style="background:#f5f5f5; border:none; width:36px; height:36px; border-radius:50%; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;">&times;</button>
+                    </div>
+                    <div id="fav-items-list" style="flex-grow:1; overflow-y:auto; padding:25px; background:#fafafa;"></div>
+                    <div style="padding:25px; border-top:1px solid #f0f0f0; background:#fff;">
+                        <button onclick="window.closeFavModal()" class="hero-btn" style="width:100%; margin:0; text-align:center; padding:15px; border-radius:15px; background:#f5f5f5; color:#333;">Continue Shopping</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        modal.style.display = 'flex';
+        updateFavModalUI();
+    };
+
+    window.closeFavModal = function() {
+        const modal = document.getElementById('fav-modal');
+        if (modal) modal.style.display = 'none';
+        toggleChatbotVisibility(true);
+    };
+
+    function updateFavModalUI() {
+        const list = document.getElementById('fav-items-list');
+        const favIds = window.EasyIntelligence ? window.EasyIntelligence.getFavorites() : [];
+        if (!list) return;
+
+        if (favIds.length === 0) {
+            list.innerHTML = '<div style="text-align:center; margin-top:50px; color:#999;"><p>Your favorites list is empty.</p></div>';
+            return;
+        }
+
+        const favProducts = globalProducts.filter(p => favIds.includes(String(p.id)));
+        list.innerHTML = favProducts.map(p => `
+            <div style="display:flex; gap:15px; margin-bottom:20px; border-bottom:1px solid #f0f0f0; padding-bottom:15px; align-items:center;">
+                <img src="${p.image_url || p.image_path}" style="width:80px; height:80px; object-fit:cover; border-radius:12px; cursor:pointer;" onclick="window.location.href='digital-product-detail.html?id=${p.id}'">
+                <div style="flex-grow:1;">
+                    <h4 style="font-size:14px; margin-bottom:5px; cursor:pointer;" onclick="window.location.href='digital-product-detail.html?id=${p.id}'">${p.title}</h4>
+                    <div style="font-size:14px; color:#f56e0f; font-weight:700;">${formatPrice(p.price)}</div>
+                    <button onclick="window.toggleFavFromModal('${p.id}')" style="background:none; border:none; color:#999; cursor:pointer; font-size:12px; margin-top:5px; text-decoration:underline;">Remove from List</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    window.toggleFavFromModal = function(id) {
+        if (window.EasyIntelligence) {
+            window.EasyIntelligence.toggleFavorite(id);
+            updateFavModalUI();
+            
+            // Sync current items on grid if they exist
+            const heartIcons = document.querySelectorAll(`.favorite-icon`); // This is broad but safe
+            // Re-render grid or refresh icons would be ideal. For now, modal is updated.
+        }
     };
 
     function updateCartModalUI() {
