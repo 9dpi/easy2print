@@ -189,7 +189,7 @@ header {
 }
 
 .user-actions {
-    display: none;
+    display: flex;
     align-items: center;
     gap: 24px;
     margin-left: 20px;
