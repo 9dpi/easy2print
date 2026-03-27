@@ -104,6 +104,78 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // --- Shared Cart Modal Logic for Index ---
+    window.openCartModal = function() {
+        // Reuse logic or implement here
+        let modal = document.getElementById('cart-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'cart-modal';
+            modal.className = 'universal-modal';
+            modal.style = "display:none; position:fixed; top:0; right:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:flex-end; align-items:center;";
+            modal.onclick = (e) => { if (e.target.id === 'cart-modal') window.closeCartModal(); };
+            modal.innerHTML = `
+                <div style="width:400px; height:100%; background:#fff; box-shadow:-5px 0 25px rgba(0,0,0,0.1); display:flex; flex-direction:column; animation: slideInRight 0.3s ease;">
+                    <div style="padding:20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                        <h2 style="font-size:20px;">Your Cart</h2>
+                        <button onclick="window.closeCartModal()" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+                    </div>
+                    <div id="cart-items-list" style="flex-grow:1; overflow-y:auto; padding:20px;"></div>
+                    <div style="padding:20px; border-top:1px solid #eee;" id="cart-footer">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:600; font-size:18px;">
+                            <span>Subtotal</span>
+                            <span id="cart-subtotal">$0.00</span>
+                        </div>
+                        <button onclick="window.location.href='checkout.html'" class="hero-btn" style="width:100%; margin:0; text-align:center;">Proceed to Checkout</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        modal.style.display = 'flex';
+        updateCartModalUI();
+    };
+
+    window.closeCartModal = function() {
+        const modal = document.getElementById('cart-modal');
+        if (modal) modal.style.display = 'none';
+    };
+
+    function updateCartModalUI() {
+        const list = document.getElementById('cart-items-list');
+        const cart = window.EasyIntelligence ? window.EasyIntelligence.getCart() : [];
+        const subtotalEl = document.getElementById('cart-subtotal');
+        if (!list) return;
+        if (cart.length === 0) {
+            list.innerHTML = '<div style="text-align:center; margin-top:50px; color:#999;"><p>Your cart is empty.</p></div>';
+            subtotalEl.innerText = "$0.00";
+            return;
+        }
+        let total = 0;
+        list.innerHTML = cart.map(item => {
+            const itemPrice = parseFloat(String(item.price).replace(/[^0-9.]/g, '')) || 0;
+            total += itemPrice * (item.quantity || 1);
+            return `
+                <div style="display:flex; gap:15px; margin-bottom:20px; border-bottom:1px solid #f9f9f9; padding-bottom:15px;">
+                    <img src="${item.image_url || item.image_path}" style="width:60px; height:60px; object-fit:cover; border-radius:8px;">
+                    <div style="flex-grow:1;">
+                        <h4 style="font-size:13px; margin-bottom:3px;">${item.title}</h4>
+                        <div style="font-size:13px; font-weight:600;">${formatPrice(item.price)} x ${item.quantity || 1}</div>
+                        <button onclick="window.removeCartItem('${item.id}')" style="background:none; border:none; color:#f56e0f; cursor:pointer; font-size:11px; margin-top:3px; padding:0;">Remove</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        subtotalEl.innerText = "$" + total.toFixed(2);
+    }
+
+    window.removeCartItem = function(id) {
+        if (window.EasyIntelligence) {
+            window.EasyIntelligence.removeFromCart(id);
+            updateCartModalUI();
+        }
+    };
+
     function generateTrendingCategories(products) {
         const tagCounts = {};
         products.forEach(p => {

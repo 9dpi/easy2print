@@ -111,8 +111,9 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                 <span id="fav-count-badge" class="nav-badge" style="display:none; position:absolute; top:-5px; right:-5px; background:#f56e0f; color:#fff; font-size:10px; padding:2px 5px; border-radius:10px;">0</span>
             </div>
-            <div class="action-item" title="Cart">
+            <div class="action-item" title="Cart" onclick="openCartModal()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                <span id="cart-count-badge" class="nav-badge" style="display:none; position:absolute; top:-5px; right:-5px; background:#f56e0f; color:#fff; font-size:10px; padding:2px 5px; border-radius:10px;">99</span>
             </div>
         </div>
     </div>
@@ -405,19 +406,18 @@
                 }
 
                 // 3. Favorites Logic
-                const favBtn = document.querySelector('.action-item[title="Favorites"]');
                 const isFav = window.EasyIntelligence ? window.EasyIntelligence.getFavorites().includes(String(product.id)) : false;
                 
-                // Add a specific button/icon for "Add to Favorites" near price if possible, 
-                // but for now, let's just make the existing header one work or add logic.
-                
+                // Track current product for Cart actions
+                window.currentProduct = product;
+
                 // Let's inject a "Heart" button in the price section
                 const priceSection = document.querySelector('.price-section');
                 if (priceSection && !document.getElementById('detail-fav-trigger')) {
                     const heartBtn = document.createElement('div');
                     heartBtn.id = 'detail-fav-trigger';
                     heartBtn.className = `favorite-icon ${isFav ? 'active' : ''}`;
-                    heartBtn.style = "display:inline-flex; vertical-align:middle; cursor:pointer; margin-left:15px; border:1px solid #eee; padding:5px; border-radius:50%;";
+                    heartBtn.style = "display:inline-flex; vertical-align:middle; cursor:pointer; margin-left:15px; border:1px solid #eee; padding:10px; border-radius:50%; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.05);";
                     heartBtn.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24" fill="${isFav ? '#f56e0f' : 'none'}" stroke="${isFav ? '#f56e0f' : 'currentColor'}" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
                     heartBtn.onclick = () => {
                         const nowFav = window.EasyIntelligence.toggleFavorite(product.id);
@@ -427,6 +427,19 @@
                         svg.setAttribute('stroke', nowFav ? '#f56e0f' : 'currentColor');
                     };
                     priceSection.appendChild(heartBtn);
+                }
+
+                // Update Buy Now to Add to Cart
+                const buyBtn = document.querySelector('.buy-now-btn');
+                if (buyBtn) {
+                    buyBtn.innerText = "Add to Cart";
+                    buyBtn.onclick = (e) => {
+                        e.preventDefault();
+                        if (window.EasyIntelligence) {
+                            window.EasyIntelligence.addToCart(product);
+                            openCartModal();
+                        }
+                    };
                 }
 
                 // 4. Social Proof Nudge
@@ -486,12 +499,80 @@
             }).join('');
         }
 
-        window.handleFavClick = function(el, id) {
+        // --- Cart Modal Logic ---
+        window.openCartModal = function() {
+            let modal = document.getElementById('cart-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'cart-modal';
+                modal.className = 'universal-modal';
+                modal.style = "display:none; position:fixed; top:0; right:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:flex-end; align-items:center;";
+                modal.onclick = (e) => { if (e.target.id === 'cart-modal') window.closeCartModal(); };
+                modal.innerHTML = `
+                    <div style="width:400px; height:100%; background:#fff; box-shadow:-5px 0 25px rgba(0,0,0,0.1); display:flex; flex-direction:column; animation: slideInRight 0.3s ease;">
+                        <div style="padding:20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                            <h2 style="font-size:20px;">Your Cart</h2>
+                            <button onclick="window.closeCartModal()" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+                        </div>
+                        <div id="cart-items-list" style="flex-grow:1; overflow-y:auto; padding:20px;">
+                            <!-- Items will be injected here -->
+                        </div>
+                        <div style="padding:20px; border-top:1px solid #eee;" id="cart-footer">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:600; font-size:18px;">
+                                <span>Subtotal</span>
+                                <span id="cart-subtotal">$0.00</span>
+                            </div>
+                            <button onclick="window.location.href='checkout.html'" class="buy-now-btn" style="width:100%; margin:0;">Proceed to Checkout</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+            modal.style.display = 'flex';
+            updateCartModalUI();
+        };
+
+        window.closeCartModal = function() {
+            const modal = document.getElementById('cart-modal');
+            if (modal) modal.style.display = 'none';
+        };
+
+        function updateCartModalUI() {
+            const list = document.getElementById('cart-items-list');
+            const cart = window.EasyIntelligence ? window.EasyIntelligence.getCart() : [];
+            const subtotalEl = document.getElementById('cart-subtotal');
+            
+            if (!list) return;
+
+            if (cart.length === 0) {
+                list.innerHTML = '<div style="text-align:center; margin-top:50px; color:#999;"><p>Your cart is empty.</p></div>';
+                subtotalEl.innerText = "$0.00";
+                return;
+            }
+
+            let total = 0;
+            list.innerHTML = cart.map(item => {
+                const itemPrice = parseFloat(String(item.price).replace(/[^0-9.]/g, '')) || 0;
+                total += itemPrice * (item.quantity || 1);
+                return `
+                    <div style="display:flex; gap:15px; margin-bottom:20px; border-bottom:1px solid #f9f9f9; padding-bottom:15px;">
+                        <img src="${item.image_url || item.image_path}" style="width:70px; height:70px; object-fit:cover; border-radius:8px;">
+                        <div style="flex-grow:1;">
+                            <h4 style="font-size:14px; margin-bottom:5px;">${item.title}</h4>
+                            <div style="font-size:14px; font-weight:600;">${formatPrice(item.price)} x ${item.quantity || 1}</div>
+                            <button onclick="window.removeCartItem('${item.id}')" style="background:none; border:none; color:#f56e0f; cursor:pointer; font-size:12px; margin-top:5px; padding:0;">Remove</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            subtotalEl.innerText = "$" + total.toFixed(2);
+        }
+
+        window.removeCartItem = function(id) {
             if (window.EasyIntelligence) {
-                const isNowFav = window.EasyIntelligence.toggleFavorite(id);
-                el.classList.toggle('active', isNowFav);
-                const svg = el.querySelector('svg');
-                svg.setAttribute('fill', isNowFav ? 'currentColor' : 'none');
+                window.EasyIntelligence.removeFromCart(id);
+                updateCartModalUI();
             }
         };
 
