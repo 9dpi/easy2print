@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modal.style = "display:none; position:fixed; top:0; right:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9000; justify-content:flex-end; align-items:center;";
             modal.onclick = (e) => { if (e.target.id === 'cart-modal') window.closeCartModal(); };
             modal.innerHTML = `
-                <div style="width:420px; height:85vh; background:#fff; margin-right:20px; border-radius:30px; box-shadow:-5px 5px 30px rgba(0,0,0,0.15); display:flex; flex-direction:column; animation: slideInRightDrawer 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); overflow:hidden;">
+                <div style="width:420px; height:85vh; background:#fff; margin-right:20px; margin-bottom:30px; border-radius:30px; box-shadow:-5px 5px 30px rgba(0,0,0,0.15); display:flex; flex-direction:column; animation: slideInRightDrawer 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); overflow:hidden;">
                     <style>
                         @keyframes slideInRightDrawer { from { transform: translateX(100%) scale(0.95); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
                     </style>
