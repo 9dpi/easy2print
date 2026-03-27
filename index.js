@@ -56,9 +56,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const priceFormatted = formatPrice(product.price);
             const origFormatted = product.original_price ? formatPrice(product.original_price) : '';
             
+            // Get Social Proof Nudge
+            const nudgeHtml = typeof window.getRandomNudge === 'function' ? `<div class="social-nudge-badge">${window.getRandomNudge()}</div>` : '';
+            
             return `
                 <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=${product.id}'" data-tags="${tagsDataAttr}">
                     <div class="product-image-container">
+                        ${nudgeHtml}
                         <img src="${product.image_url || product.image_path}" alt="${product.title}" loading="lazy">
                         <div class="favorite-icon">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>

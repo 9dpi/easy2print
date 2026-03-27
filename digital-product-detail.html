@@ -195,6 +195,7 @@
         <div class="product-details">
             <p class="breadcrumbs">Digital Downloads > SVG & Embroidery Files > Home Decor</p>
             <h1 class="product-title">Premium Machine Embroidery Design – DST & PES Files for Home Beginners</h1>
+            <div id="detail-nudge" style="margin-bottom: 15px;"></div>
             
             <div class="price-section">
                 <span class="price">$8.50</span>
@@ -392,6 +393,12 @@
                 if (document.querySelector('.rating-number')) {
                     document.querySelector('.rating-number').innerText = randomRating.toFixed(1);
                 }
+
+                // 2. Social Proof Nudge
+                const detailNudge = document.getElementById('detail-nudge');
+                if (detailNudge && typeof window.getRandomNudge === 'function') {
+                    detailNudge.innerHTML = `<span class="social-nudge-badge" style="position:relative; top:0; left:0; display:inline-flex;">${window.getRandomNudge()}</span>`;
+                }
             }
         } catch (e) {
             console.error('Error loading detail:', e);
@@ -505,6 +512,7 @@
         };
     });
 </script>
+<script src="nudges.js"></script>
 <script src="checkout.js"></script>
 <!-- Chatbot Integration -->
 <link rel="stylesheet" href="chatbot.css">
