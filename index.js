@@ -3,12 +3,42 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Phase 2: Dynamic Product Loading ---
     const API_URL = 'https://script.google.com/macros/s/AKfycbwBQdvEMfs43bA-tiHzKALERxhrPFIUK-IXkWOio3vLCe8QUXfyziGliwIkckFtt5mFLw/exec';
     const PREF_KEY = 'easy_user_preference';
+    const CACHE_KEY = 'easy_products_cache';
+    const CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache
+
+    let globalProducts = [];
 
     function formatPrice(val) {
         if (!val) return '';
         const num = parseFloat(String(val).replace(/[^0-9.]/g, ''));
         if (isNaN(num)) return val;
         return '$' + num.toFixed(2);
+    }
+
+    async function getCachedProducts() {
+        try {
+            const cached = sessionStorage.getItem(CACHE_KEY);
+            if (cached) {
+                const { data, timestamp } = JSON.parse(cached);
+                if (Date.now() - timestamp < CACHE_TTL) {
+                    console.log('🚀 Loading from Fast Cache (TTL 5m)');
+                    return data;
+                }
+            }
+        } catch (e) {}
+
+        console.log('📡 Fetching Fresh Data from API...');
+        const response = await fetch(API_URL);
+        const products = await response.json();
+        
+        try {
+            sessionStorage.setItem(CACHE_KEY, JSON.stringify({
+                data: products,
+                timestamp: Date.now()
+            }));
+        } catch (e) {}
+        
+        return products;
     }
 
     async function loadProducts() {
@@ -22,10 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (secondaryGrid) secondaryGrid.innerHTML = skeletonHtml;
 
         try {
-            const response = await fetch(API_URL);
-            const products = await response.json();
-            console.log('Fetching latest from API (Cache Disabled)');
-            renderProducts(products);
+            globalProducts = await getCachedProducts();
+            renderProducts(globalProducts);
         } catch (error) {
             console.error('Error loading products:', error);
             grid.innerHTML = '<div class="error-msg">Failed to load products. Please refresh.</div>';
@@ -96,17 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Shared Cart Modal Logic for Index ---
-    let globalProducts = []; // To store products for modal lookups
+    // globalProducts is already defined at the top
     
-    async function loadProducts() {
-        // ... grid logic
-        try {
-            const response = await fetch(API_URL);
-            globalProducts = await response.json();
-            console.log('Fetching latest from API (Cache Disabled)');
-            renderProducts(globalProducts);
-        } catch (error) { /* ... */ }
-    }
 
     // Modal helpers for chatbot visibility
     function toggleChatbotVisibility(visible) {
