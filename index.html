@@ -37,6 +37,7 @@
         <div class="user-actions">
             <div class="action-item" title="Favorites">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                <span id="fav-count-badge" class="nav-badge" style="display:none; position:absolute; top:-5px; right:-5px; background:#f56e0f; color:#fff; font-size:10px; padding:2px 5px; border-radius:10px;">0</span>
             </div>
             <div class="action-item" title="Cart">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
@@ -276,6 +277,7 @@
     </div>
 </div>
 
+<script src="intelligence.js"></script>
 <script src="nudges.js"></script>
 <script src="index.js?v=2.3"></script>
 <!-- Chatbot Integration -->

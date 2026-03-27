@@ -109,6 +109,7 @@
         <div class="user-actions">
             <div class="action-item" title="Favorites">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                <span id="fav-count-badge" class="nav-badge" style="display:none; position:absolute; top:-5px; right:-5px; background:#f56e0f; color:#fff; font-size:10px; padding:2px 5px; border-radius:10px;">0</span>
             </div>
             <div class="action-item" title="Cart">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
@@ -387,14 +388,38 @@
                     thumbs[0].alt = product.title;
                 }
 
-                // 1. Random Rating (4.8 - 5.0)
-                const ratings = [4.8, 4.9, 5.0];
-                const randomRating = ratings[Math.floor(Math.random() * ratings.length)];
-                if (document.querySelector('.rating-number')) {
-                    document.querySelector('.rating-number').innerText = randomRating.toFixed(1);
+                // 2. Personalization: Track History
+                if (window.EasyIntelligence && product.tags) {
+                    const primaryTag = product.tags.split(',')[0].trim();
+                    window.EasyIntelligence.trackHistory(product.id, primaryTag);
                 }
 
-                // 2. Social Proof Nudge
+                // 3. Favorites Logic
+                const favBtn = document.querySelector('.action-item[title="Favorites"]');
+                const isFav = window.EasyIntelligence ? window.EasyIntelligence.getFavorites().includes(String(product.id)) : false;
+                
+                // Add a specific button/icon for "Add to Favorites" near price if possible, 
+                // but for now, let's just make the existing header one work or add logic.
+                
+                // Let's inject a "Heart" button in the price section
+                const priceSection = document.querySelector('.price-section');
+                if (priceSection && !document.getElementById('detail-fav-trigger')) {
+                    const heartBtn = document.createElement('div');
+                    heartBtn.id = 'detail-fav-trigger';
+                    heartBtn.className = `favorite-icon ${isFav ? 'active' : ''}`;
+                    heartBtn.style = "display:inline-flex; vertical-align:middle; cursor:pointer; margin-left:15px; border:1px solid #eee; padding:5px; border-radius:50%;";
+                    heartBtn.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24" fill="${isFav ? '#f56e0f' : 'none'}" stroke="${isFav ? '#f56e0f' : 'currentColor'}" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
+                    heartBtn.onclick = () => {
+                        const nowFav = window.EasyIntelligence.toggleFavorite(product.id);
+                        heartBtn.classList.toggle('active', nowFav);
+                        const svg = heartBtn.querySelector('svg');
+                        svg.setAttribute('fill', nowFav ? '#f56e0f' : 'none');
+                        svg.setAttribute('stroke', nowFav ? '#f56e0f' : 'currentColor');
+                    };
+                    priceSection.appendChild(heartBtn);
+                }
+
+                // 4. Social Proof Nudge
                 const detailNudge = document.getElementById('detail-nudge');
                 if (detailNudge && typeof window.getRandomNudge === 'function') {
                     detailNudge.innerHTML = `<span class="social-nudge-badge" style="position:relative; top:0; left:0; display:inline-flex;">${window.getRandomNudge()}</span>`;
@@ -512,6 +537,7 @@
         };
     });
 </script>
+<script src="intelligence.js"></script>
 <script src="nudges.js"></script>
 <script src="checkout.js"></script>
 <!-- Chatbot Integration -->

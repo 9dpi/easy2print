@@ -44,10 +44,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- NEW: Generate Trending Categories (Hashtags) ---
         generateTrendingCategories(products);
 
-        // Clone and Shuffle for "Suggested"
-        const shuffled = [...products].sort(() => 0.5 - Math.random());
-        const suggested = shuffled.slice(0, 5);
-        const others = shuffled.slice(5);
+        // Clone and Shuffle
+        let masterList = [...products];
+        const topTag = window.EasyIntelligence ? window.EasyIntelligence.getTopInterest() : null;
+        
+        if (topTag) {
+            console.log("Personalizing view for interest:", topTag);
+            // Move items with matching tag to the front
+            masterList.sort((a, b) => {
+                const aHas = a.tags && a.tags.toLowerCase().includes(topTag.toLowerCase());
+                const bHas = b.tags && b.tags.toLowerCase().includes(topTag.toLowerCase());
+                return (aHas === bHas) ? 0 : aHas ? -1 : 1;
+            });
+        }
+
+        const suggested = masterList.slice(0, 5);
+        const others = masterList.slice(5);
+
+        const currentFavs = window.EasyIntelligence ? window.EasyIntelligence.getFavorites() : [];
 
         const createCard = (product) => {
             const tags = product.tags ? product.tags.split(',').map(t => t.trim()) : [];
@@ -59,17 +73,19 @@ document.addEventListener('DOMContentLoaded', () => {
             // Get Social Proof Nudge
             const nudgeHtml = typeof window.getRandomNudge === 'function' ? `<div class="social-nudge-badge">${window.getRandomNudge()}</div>` : '';
             
+            const isFav = currentFavs.includes(String(product.id));
+
             return `
-                <div class="product-card" onclick="window.location.href='digital-product-detail.html?id=${product.id}'" data-tags="${tagsDataAttr}">
+                <div class="product-card" data-tags="${tagsDataAttr}">
                     <div class="product-image-container">
                         ${nudgeHtml}
-                        <img src="${product.image_url || product.image_path}" alt="${product.title}" loading="lazy">
-                        <div class="favorite-icon">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        <img src="${product.image_url || product.image_path}" alt="${product.title}" loading="lazy" onclick="window.location.href='digital-product-detail.html?id=${product.id}'">
+                        <div class="favorite-icon ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); handleFavClick(this, '${product.id}')">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                         </div>
                         <span class="stock-status">EMBROIDERY</span>
                     </div>
-                    <div class="product-info">
+                    <div class="product-info" onclick="window.location.href='digital-product-detail.html?id=${product.id}'">
                         <h3>${product.title}</h3>
                         <div class="product-price">${priceFormatted} <span class="original-price">${origFormatted}</span></div>
                         <div class="hashtags">${hashtagsHtml}</div>
@@ -78,14 +94,21 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         };
 
-        // Render Suggested (Grid 1)
+        // Render grids...
         suggested.forEach(p => grid.innerHTML += createCard(p));
-
-        // Render Others (Grid 2)
         if (secondaryGrid) {
             others.forEach(p => secondaryGrid.innerHTML += createCard(p));
         }
     }
+
+    window.handleFavClick = function(el, id) {
+        if (window.EasyIntelligence) {
+            const isNowFav = window.EasyIntelligence.toggleFavorite(id);
+            el.classList.toggle('active', isNowFav);
+            const svg = el.querySelector('svg');
+            svg.setAttribute('fill', isNowFav ? 'currentColor' : 'none');
+        }
+    };
 
     function generateTrendingCategories(products) {
         const tagCounts = {};
