@@ -118,6 +118,56 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mobileNav) mobileNav.innerHTML = mobileHtml;
     }
 
+    const PREF_KEY = 'easy_user_preference';
+
+    async function loadProducts() {
+        // ... (existing code remains outside this replace block)
+        // Ensure generateTrendingCategories is called inside loadProducts in reality
+    }
+
+    // --- NEW: Personalized Category Circles Logic ---
+    const allCategories = [
+        { id: 'men', label: 'Men\'s Style', icon: 'assets/men_tshirt.png', tag: 'men tshirt', gender: 'men' },
+        { id: 'women', label: 'Floral & Decor', icon: 'assets/women_accessories.png', tag: 'floral', gender: 'women' },
+        { id: 'baby', label: 'Kid & Babies', icon: 'assets/mug-poster.png', tag: 'baby', gender: 'women' },
+        { id: 'home', label: 'Home & Living', icon: 'assets/floral-door-hanger.png', tag: 'home', gender: 'both' },
+        { id: 'acc', label: 'Accessories', icon: 'assets/accessories_mockup.png', tag: 'accessories', gender: 'both' },
+        { id: 'gift', label: 'Anniversary', icon: 'assets/gift_anniversary_mockup.png', tag: 'gift', gender: 'both' }
+    ];
+
+    function renderPersonalizedCircles() {
+        const container = document.getElementById('dynamic-circles');
+        if (!container) return;
+
+        const pref = localStorage.getItem(PREF_KEY) || 'neutral';
+        let sorted = [...allCategories];
+
+        if (pref === 'men') {
+            sorted = sorted.sort((a, b) => (a.gender === 'men' ? -1 : (b.gender === 'men' ? 1 : 0)));
+        } else if (pref === 'women') {
+            sorted = sorted.sort((a, b) => (a.gender === 'women' ? -1 : (b.gender === 'women' ? 1 : 0)));
+        }
+
+        container.innerHTML = sorted.map(cat => `
+            <div class="circle-item" onclick="trackPreference('${cat.gender}'); filterCategory(event, '${cat.tag}')">
+                <div class="circle-img">
+                    <img src="${cat.icon}" alt="${cat.label}">
+                </div>
+                <span>${cat.label}</span>
+            </div>
+        `).join('');
+    }
+
+    window.trackPreference = function(gender) {
+        if (gender !== 'both') {
+            localStorage.setItem(PREF_KEY, gender);
+            console.log(`User preference updated to: ${gender}`);
+        }
+    };
+
+    // Initial Render
+    renderPersonalizedCircles();
+
     window.filterCategory = function(e, tag) {
         if (e) e.preventDefault();
         const cards = document.querySelectorAll('.product-card');
