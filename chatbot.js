@@ -74,12 +74,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const div = document.createElement('div');
         div.className = 'custom-form-container';
         div.innerHTML = `
-            <div class="custom-form" style="background:#fff; border:1px solid #eee; padding:15px; border-radius:15px; margin-top:10px">
+            <div class="custom-form" style="border:1px solid #333; padding:15px; border-radius:15px; margin-top:10px">
                 <input type="text" id="form-email" placeholder="Your Email Address" required>
                 <input type="text" id="form-size" placeholder="Stich Size (e.g. 4x4, 5x7)">
                 <textarea id="form-msg" placeholder="Tell us more about your design..."></textarea>
                 <button class="btn-send-request" id="submit-custom-req">Send My Request</button>
-                <p style="font-size:10px; color:#666; margin-top:8px">We'll contact you within 24h!</p>
+                <p style="font-size:10px; color:#aaa; margin-top:8px">We'll contact you within 24h!</p>
             </div>
         `;
         messages.appendChild(div);
